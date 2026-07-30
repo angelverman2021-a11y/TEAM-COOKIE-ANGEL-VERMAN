@@ -175,7 +175,7 @@ class VisionEngine:
         try:
             from deepface import DeepFace
             dummy_img = np.zeros((224, 224, 3), dtype=np.uint8)
-            DeepFace.analyze(dummy_img, actions=['emotion'], enforce_detection=False, detector_backend='opencv')
+            DeepFace.analyze(dummy_img, actions=['emotion'], enforce_detection=False, detector_backend='skip')
         except Exception as e:
             print(f"[VISION] DeepFace warmup notice: {e}")
 
@@ -218,7 +218,7 @@ class VisionEngine:
                                         crop_img,
                                         actions=['emotion'],
                                         enforce_detection=False,
-                                        detector_backend='opencv'
+                                        detector_backend='skip'
                                     )
                                     if isinstance(analysis, list):
                                         emotion = analysis[0]['dominant_emotion']
