@@ -57,40 +57,83 @@ class ObjectDetector:
 
 
 class ObjectTracker:
-    """Class 2: ObjectTracker - Persistent object tracking across frames."""
+    """Class 2: ObjectTracker - Persistent object tracking across frames using pure Python IOU (prevents PyTorch CUDA deadlocks)."""
     def __init__(self, detector: ObjectDetector):
         self.detector = detector
+        self.next_id = 1
+        self.tracked_objects = {} # id -> {"box": [x1,y1,x2,y2], "conf": conf, "cls": cls_id, "label": label, "missed": 0}
+
+    def _compute_iou(self, box1, box2):
+        x1 = max(box1[0], box2[0])
+        y1 = max(box1[1], box2[1])
+        x2 = min(box1[2], box2[2])
+        y2 = min(box1[3], box2[3])
+        if x2 < x1 or y2 < y1: return 0.0
+        intersection = (x2 - x1) * (y2 - y1)
+        area1 = (box1[2] - box1[0]) * (box1[3] - box1[1])
+        area2 = (box2[2] - box2[0]) * (box2[3] - box2[1])
+        return intersection / float(area1 + area2 - intersection)
 
     def track(self, frame):
-        """Performs persistent object tracking with ByteTrack."""
-        results = self.detector.model.track(
+        """Performs detection and purely python-based IOU tracking."""
+        results = self.detector.model(
             frame,
-            persist=True,
-            tracker="bytetrack.yaml",
             conf=self.detector.conf_thresh,
             iou=self.detector.iou_thresh,
             device=self.detector.device,
             verbose=False
         )
         
-        tracked_objects = []
+        current_detections = []
         if results and len(results) > 0 and results[0].boxes is not None:
             boxes = results[0].boxes
             for box in boxes:
                 xyxy = box.xyxy[0].cpu().numpy()
                 conf = float(box.conf[0].cpu().numpy())
                 cls_id = int(box.cls[0].cpu().numpy())
-                track_id = int(box.id[0].cpu().numpy()) if box.id is not None else None
+                label = results[0].names[cls_id] if hasattr(results[0], 'names') else str(cls_id)
+                current_detections.append({"box": [int(xyxy[0]), int(xyxy[1]), int(xyxy[2]), int(xyxy[3])], "conf": conf, "cls": cls_id, "label": label})
+        
+        # Match detections to existing tracks
+        new_tracked = {}
+        for det in current_detections:
+            best_id = None
+            best_iou = 0.3
+            for tid, tobj in self.tracked_objects.items():
+                if tobj["cls"] != det["cls"]: continue
+                iou = self._compute_iou(det["box"], tobj["box"])
+                if iou > best_iou:
+                    best_iou = iou
+                    best_id = tid
+            
+            if best_id is not None:
+                new_tracked[best_id] = det
+                new_tracked[best_id]["missed"] = 0
+                del self.tracked_objects[best_id]
+            else:
+                new_tracked[self.next_id] = det
+                new_tracked[self.next_id]["missed"] = 0
+                self.next_id += 1
                 
-                tracked_objects.append({
-                    "box": [int(xyxy[0]), int(xyxy[1]), int(xyxy[2]), int(xyxy[3])],
-                    "conf": conf,
-                    "cls": cls_id,
-                    "track_id": track_id,
-                    "label": results[0].names[cls_id] if hasattr(results[0], 'names') else str(cls_id)
-                })
-                
-        return tracked_objects
+        # Keep missed objects for 5 frames
+        for tid, tobj in self.tracked_objects.items():
+            if tobj["missed"] < 5:
+                tobj["missed"] += 1
+                new_tracked[tid] = tobj
+
+        self.tracked_objects = new_tracked
+        
+        out = []
+        for tid, obj in self.tracked_objects.items():
+            out.append({
+                "box": obj["box"],
+                "conf": obj["conf"],
+                "cls": obj["cls"],
+                "track_id": tid,
+                "label": obj["label"]
+            })
+        return out
+
 
 
 class FrameProcessor:
