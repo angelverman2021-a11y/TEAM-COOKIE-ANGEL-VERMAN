@@ -119,8 +119,8 @@ class FrameProcessor:
             label = obj["label"]
             conf = obj["conf"]
 
-            # Person gets primary green, other objects cyan
-            color = (154, 251, 107) if obj["cls"] == 0 else (238, 211, 34)
+            # Person gets pure neon green (BGR format: 0, 255, 100), other objects cyan (255, 200, 0)
+            color = (0, 255, 100) if obj["cls"] == 0 else (255, 200, 0)
             
             # Bounding Box
             cv2.rectangle(annotated, (x1, y1), (x2, y2), color, 2)
@@ -161,6 +161,7 @@ class VisionEngine:
         self.is_analyzing_emotion = False
         self.frame_count = 0
         self.lock = threading.Lock()
+        self.frame_ready_event = threading.Event()
 
         # Initialize AI Components
         self.detector = ObjectDetector(model_path=YOLO_MODEL_PATH, device=DEVICE)
@@ -250,11 +251,9 @@ class VisionEngine:
         self.running = True
         self.audio.speak("Vision system online. Streaming to dashboard.")
 
-        target_dt = 1.0 / TARGET_FPS
         consecutive_failures = 0
 
         while self.running:
-            t0 = time.time()
             success, frame = self.camera.read()
             if not success or frame is None:
                 consecutive_failures += 1
@@ -263,7 +262,7 @@ class VisionEngine:
                     print(f"[ERROR] {msg}")
                     self.audio.speak(msg)
                     break
-                time.sleep(0.02)
+                time.sleep(0.01)
                 continue
             
             consecutive_failures = 0
@@ -307,17 +306,12 @@ class VisionEngine:
             # Draw HUD Overlays
             annotated_frame = self.processor.draw_hud(frame, tracked, self.current_emotion)
             
-            # Encode frame to JPEG safely inside lock
-            ret, buf = cv2.imencode('.jpg', annotated_frame)
+            # Encode frame to JPEG safely inside lock with quality 85
+            ret, buf = cv2.imencode('.jpg', annotated_frame, [int(cv2.IMWRITE_JPEG_QUALITY), 85])
             if ret:
                 with self.lock:
                     self.latest_jpeg_bytes = buf.tobytes()
-
-            # Target FPS sleep
-            elapsed = time.time() - t0
-            sleep_time = target_dt - elapsed
-            if sleep_time > 0:
-                time.sleep(sleep_time)
+                self.frame_ready_event.set()
 
         self.camera.release()
 

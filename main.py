@@ -35,13 +35,20 @@ def on_emotion_changed(emotion):
             print(f"[GUARDIAN SOS]: SMS sent to {guardian_info['phone']} - User may be in a hostile environment!")
 
 def generate_video_stream():
-    """Generator function to yield JPEG frames for the Flask web stream."""
+    """Generator function to yield JPEG frames instantly whenever a new frame is ready."""
+    last_frame = None
     while True:
+        if vision.running:
+            vision.frame_ready_event.wait(timeout=0.1)
+            vision.frame_ready_event.clear()
+        
         frame = vision.get_frame()
-        if frame is not None:
+        if frame is not None and frame != last_frame:
+            last_frame = frame
             yield (b'--frame\r\n'
                    b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
-        time.sleep(0.03) # Cap at ~30 FPS to save CPU
+        else:
+            time.sleep(0.01)
 
 # --- FLASK ROUTES ---
 
