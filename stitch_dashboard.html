@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>NAVI AI Accessibility Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface": "rgba(255, 255, 255, 0.06)",
+                        "outline-variant": "#3d4a3e",
+                        "on-secondary": "#00315d",
+                        "on-primary-fixed": "#00210c",
+                        "background": "#090909",
+                        "on-surface": "#e5e2e1",
+                        "primary-fixed-dim": "#4de082",
+                        "inverse-primary": "#006d36",
+                        "tertiary-container": "#ffb47f",
+                        "tertiary-fixed-dim": "#ffb784",
+                        "surface-container-low": "#1c1b1b",
+                        "error": "#ffb4ab",
+                        "surface-dim": "#131313",
+                        "on-tertiary-fixed-variant": "#6c3a0f",
+                        "on-error-container": "#ffdad6",
+                        "primary": "#6bfb9a",
+                        "on-secondary-fixed-variant": "#004883",
+                        "accent-purple": "#A855F7",
+                        "secondary-fixed": "#d4e3ff",
+                        "tertiary-fixed": "#ffdcc6",
+                        "primary-fixed": "#6dfe9c",
+                        "surface-tint": "#4de082",
+                        "surface-container-high": "#2a2a2a",
+                        "on-primary": "#003919",
+                        "on-secondary-container": "#d6e5ff",
+                        "on-tertiary-fixed": "#301400",
+                        "on-secondary-fixed": "#001c39",
+                        "tertiary": "#ffd9c1",
+                        "inverse-on-surface": "#313030",
+                        "danger": "#EF4444",
+                        "on-primary-container": "#005e2d",
+                        "on-surface-variant": "#bccabb",
+                        "border-glass": "rgba(255, 255, 255, 0.10)",
+                        "accent-cyan": "#22D3EE",
+                        "on-tertiary-container": "#794418",
+                        "secondary-container": "#0267b8",
+                        "surface-variant": "#353534",
+                        "surface-bright": "#3a3939",
+                        "on-error": "#690005",
+                        "surface-container-lowest": "#0e0e0e",
+                        "surface-container-highest": "#353534",
+                        "inverse-surface": "#e5e2e1",
+                        "secondary": "#a4c9ff",
+                        "on-primary-fixed-variant": "#005227",
+                        "outline": "#869486",
+                        "on-tertiary": "#4f2500",
+                        "error-container": "#93000a",
+                        "surface-container": "#201f1f",
+                        "secondary-fixed-dim": "#a4c9ff",
+                        "on-background": "#e5e2e1",
+                        "primary-container": "#4ade80"
+                    },
+                    "spacing": {
+                        "xl": "40px",
+                        "margin-mobile": "20px",
+                        "md": "16px",
+                        "lg": "24px",
+                        "margin-desktop": "64px",
+                        "sm": "8px",
+                        "xs": "4px",
+                        "gutter": "24px",
+                        "unit": "4px"
+                    },
+                    "fontFamily": {
+                        "title-md": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "headline-lg": ["Inter"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            background-color: #090909;
+            color: #e5e2e1;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+        }
+        .glow-emerald {
+            box-shadow: 0 0 20px rgba(107, 251, 154, 0.15);
+        }
+        .glow-blue {
+            box-shadow: 0 0 20px rgba(96, 165, 250, 0.15);
+        }
+        .glow-red {
+            box-shadow: 0 0 30px rgba(239, 68, 68, 0.4);
+        }
+        .pulse {
+            animation: pulse-animation 2s infinite;
+        }
+        @keyframes pulse-animation {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.8; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .waveform-bar {
+            animation: wave 1.2s ease-in-out infinite;
+        }
+        @keyframes wave {
+            0%, 100% { height: 4px; }
+            50% { height: 24px; }
+        }
+        .scan-line {
+            width: 100%;
+            height: 2px;
+            background: rgba(107, 251, 154, 0.5);
+            position: absolute;
+            top: 0;
+            left: 0;
+            animation: scan 3s linear infinite;
+        }
+        @keyframes scan {
+            0% { top: 0; }
+            100% { top: 100%; }
+        }
+        #hardware-canvas-container canvas {
+            display: block;
+            width: 100% !important;
+            height: 100% !important;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col p-4 md:p-6 gap-6">
+<!-- TopNavBar -->
+<header class="fixed top-0 left-0 w-full z-50 bg-background/80 backdrop-blur-xl border-b border-border-glass shadow-sm flex justify-between items-center px-lg py-md">
+<div class="flex items-center gap-md">
+<span class="text-title-md font-title-md font-bold tracking-tighter text-primary">NAVI</span>
+<div class="flex items-center gap-xs px-sm py-xs rounded-full bg-primary/10 border border-primary/20">
+<div class="w-2 h-2 rounded-full bg-primary pulse"></div>
+<span class="text-label-sm font-label-sm text-primary">Connected</span>
+</div>
+</div>
+<nav class="hidden md:flex gap-lg">
+<a class="text-primary border-b-2 border-primary pb-1 text-label-sm font-label-sm" href="#">Dashboard</a>
+<a class="text-on-surface-variant font-medium text-label-sm font-label-sm hover:text-primary-fixed-dim transition-colors duration-300" href="#">Vision</a>
+<a class="text-on-surface-variant font-medium text-label-sm font-label-sm hover:text-primary-fixed-dim transition-colors duration-300" href="#">Guardian</a>
+<a class="text-on-surface-variant font-medium text-label-sm font-label-sm hover:text-primary-fixed-dim transition-colors duration-300" href="#">Activity</a>
+</nav>
+<div class="flex items-center gap-md">
+<div class="flex items-center gap-xs text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px]">battery_charging_full</span>
+<span class="text-label-sm font-label-sm">85%</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-primary">bluetooth_connected</span>
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-primary">settings</span>
+<div class="w-8 h-8 rounded-full bg-surface-variant border border-border-glass overflow-hidden">
+<img alt="User Profile" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBgVsUtkzBdFxA1IBfMCsNCfILxw5shQ2qT_1BISGvRiL1MglrLW6upmuYVZ1E787wU8hc-p6lPO6N-umO5B3dzMR8wdPxVwSOImsYWikg70Vck5kbK-WwSegaSUfaC-zW3XbQ-Sh68pu1SAAdnQUEXhhimCHopI5Z0QH4rultrwfSdQKFn9dVqAYs2PS4MDsYXFoPMiVPkANQ2qy3cgkdNf8y6TnFKPo-T0uUzPeuKvck6xmpPRoPi"/>
+</div>
+</div>
+</header>
+<!-- Main Content Grid -->
+<main class="grid grid-cols-1 lg:grid-cols-12 gap-6 mt-20 flex-grow">
+<!-- Left Column: Hardware & Connection -->
+<div class="lg:col-span-3 flex flex-col gap-6">
+<section class="glass-card flex-grow overflow-hidden relative flex flex-col min-h-[400px]">
+<div class="p-md border-b border-border-glass flex justify-between items-center bg-surface-container-low/40">
+<h2 class="text-title-md font-title-md text-primary">Hardware Preview</h2>
+<span class="material-symbols-outlined text-on-surface-variant">deployed_code</span>
+</div>
+<div class="relative flex-grow flex items-center justify-center overflow-hidden" id="hardware-canvas-container">
+<!-- Three.js Canvas will be injected here -->
+<div class="absolute bottom-4 left-4 right-4 p-sm glass-card bg-background/60 backdrop-blur-md z-10">
+<p class="text-label-sm font-label-sm text-on-surface/80 uppercase tracking-tighter">Vision+Nav v1.0 Elite</p>
+<div class="w-full bg-white/10 h-1 mt-2 rounded-full overflow-hidden">
+<div class="bg-primary h-full w-4/5"></div>
+</div>
+</div>
+</div>
+</section>
+<section class="glass-card p-md glow-blue">
+<h3 class="text-label-sm font-label-sm text-secondary mb-md uppercase tracking-widest">Device Connection</h3>
+<div class="flex items-center gap-md p-sm rounded-lg bg-white/5 border border-white/10">
+<div class="w-10 h-10 rounded-full bg-secondary/20 flex items-center justify-center">
+<span class="material-symbols-outlined text-secondary">headphones</span>
+</div>
+<div class="flex-grow">
+<p class="text-body-md font-bold">Spatial Audio Buds</p>
+<p class="text-xs text-on-surface-variant">Active • Low Latency</p>
+</div>
+<span class="material-symbols-outlined text-primary text-sm">check_circle</span>
+</div>
+</section>
+</div>
+<!-- Center Column: Live AI Vision -->
+<div class="lg:col-span-6 flex flex-col gap-6">
+<section class="glass-card flex-grow overflow-hidden relative min-h-[400px]">
+<div class="absolute inset-0 overflow-hidden">
+<img alt="HUD View" class="w-full h-full object-cover opacity-60" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBjDc4cYJQ_laxAkELM40xTJNWKCwks1dp3XUUwA4riGeB7_DloFFaaGwv7ZXNelnV5ifyS0rSSI9C5jhsEr_yTwdFVt5GKB2JYSlGWstdMpN2d4AcVxnYMiuM_BCamEXpr_vqXwPzSsGi5TfhyMFSXsNyy23QnrEPCOyIyML-lKJH-zWjgYsO21ziTVSTtsWwfIi5Qla4PAHMeGTgdvcBNzeQK3zn8ewJdLDEgmZJWJSTxEN7Dxogo"/>
+<div class="scan-line"></div>
+</div>
+<!-- HUD Overlays -->
+<div class="absolute inset-0 p-lg pointer-events-none flex flex-col justify-between">
+<div class="flex justify-between items-start">
+<div class="flex flex-col gap-2">
+<div class="px-md py-sm glass-card border-primary/50 bg-primary/10 flex items-center gap-sm">
+<span class="w-2 h-2 rounded-full bg-primary pulse"></span>
+<span class="text-label-sm font-label-sm text-primary uppercase">Traffic Light: Green</span>
+</div>
+<div class="px-md py-sm glass-card border-accent-cyan/50 bg-accent-cyan/10 flex items-center gap-sm">
+<span class="material-symbols-outlined text-accent-cyan text-sm">person</span>
+<span class="text-label-sm font-label-sm text-accent-cyan uppercase">Person: 3m Ahead</span>
+</div>
+</div>
+<div class="glass-card p-md flex flex-col items-center gap-xs glow-emerald">
+<span class="text-[24px] font-bold text-primary">92%</span>
+<span class="text-[10px] text-on-surface-variant uppercase font-bold">Mood: Happy</span>
+</div>
+</div>
+<div class="flex justify-center">
+<div class="px-xl py-md glass-card bg-background/60 backdrop-blur-xl border-primary/30 flex items-center gap-md">
+<span class="material-symbols-outlined text-primary pulse">stairs</span>
+<span class="text-title-md font-title-md text-primary">Stairs Detected (15m)</span>
+</div>
+</div>
+</div>
+</section>
+</div>
+<!-- Right Column: Assistant & Safety -->
+<div class="lg:col-span-3 flex flex-col gap-6">
+<section class="glass-card p-lg flex flex-col gap-md glow-blue h-1/2">
+<div class="flex items-center justify-between">
+<h3 class="text-title-md font-title-md text-secondary">Voice Assistant</h3>
+<span class="material-symbols-outlined text-secondary">mic</span>
+</div>
+<div class="flex-grow flex flex-col items-center justify-center gap-md py-xl">
+<div class="flex items-end gap-1 h-12">
+<div class="w-1 bg-secondary rounded-full waveform-bar" style="animation-delay: 0.1s"></div>
+<div class="w-1 bg-secondary rounded-full waveform-bar" style="animation-delay: 0.3s"></div>
+<div class="w-1 bg-secondary rounded-full waveform-bar" style="animation-delay: 0.2s"></div>
+<div class="w-1 bg-secondary rounded-full waveform-bar" style="animation-delay: 0.5s"></div>
+<div class="w-1 bg-secondary rounded-full waveform-bar" style="animation-delay: 0.4s"></div>
+<div class="w-1 bg-secondary rounded-full waveform-bar" style="animation-delay: 0.6s"></div>
+</div>
+<p class="text-center text-body-md font-medium text-on-surface leading-relaxed">
+                    "Obstacle ahead. <br/>Move slightly <span class="text-secondary font-bold">right</span>."
+                </p>
+</div>
+</section>
+<section class="glass-card p-lg flex flex-col gap-md h-1/2">
+<div class="flex items-center justify-between">
+<h3 class="text-title-md font-title-md text-primary">Guardian Safety</h3>
+<span class="material-symbols-outlined text-primary">security</span>
+</div>
+<div class="space-y-4 mt-2">
+<div class="flex items-center justify-between p-md rounded-xl bg-white/5">
+<span class="text-body-md">Fall Detection</span>
+<div class="w-12 h-6 rounded-full bg-primary flex items-center px-1">
+<div class="w-4 h-4 rounded-full bg-on-primary"></div>
+</div>
+</div>
+<div class="flex items-center justify-between p-md rounded-xl bg-white/5 opacity-50">
+<span class="text-body-md">Object Proximity</span>
+<div class="w-12 h-6 rounded-full bg-surface-variant flex items-center px-1 justify-end">
+<div class="w-4 h-4 rounded-full bg-outline"></div>
+</div>
+</div>
+</div>
+<div class="mt-auto p-md border-t border-border-glass text-center">
+<p class="text-xs text-on-surface-variant">Active monitoring: 12h 45m</p>
+</div>
+</section>
+</div>
+</main>
+<!-- Footer Stats -->
+<footer class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-20 md:mb-6">
+<div class="glass-card p-md flex items-center gap-md">
+<span class="material-symbols-outlined text-primary p-sm bg-primary/10 rounded-lg">explore</span>
+<div>
+<p class="text-[10px] uppercase font-bold text-on-surface-variant">Navigation</p>
+<p class="text-body-md font-bold">ETA 5m</p>
+</div>
+</div>
+<div class="glass-card p-md flex items-center gap-md">
+<span class="material-symbols-outlined text-accent-cyan p-sm bg-accent-cyan/10 rounded-lg">location_on</span>
+<div>
+<p class="text-[10px] uppercase font-bold text-on-surface-variant">Nearby</p>
+<p class="text-body-md font-bold">Hospitals (2)</p>
+</div>
+</div>
+<div class="glass-card p-md flex items-center gap-md">
+<span class="material-symbols-outlined text-secondary p-sm bg-secondary/10 rounded-lg">battery_5_bar</span>
+<div>
+<p class="text-[10px] uppercase font-bold text-on-surface-variant">Battery Monitor</p>
+<p class="text-body-md font-bold">Laptop: 92%</p>
+</div>
+</div>
+<div class="glass-card p-md flex items-center gap-md">
+<span class="material-symbols-outlined text-tertiary p-sm bg-tertiary/10 rounded-lg">list_alt</span>
+<div>
+<p class="text-[10px] uppercase font-bold text-on-surface-variant">Activity</p>
+<p class="text-body-md font-bold">4.2k steps today</p>
+</div>
+</div>
+</footer>
+<!-- Emergency SOS Button -->
+<button class="fixed bottom-margin-mobile right-margin-mobile md:bottom-lg md:right-lg w-16 h-16 md:w-20 md:h-20 bg-danger rounded-full flex flex-col items-center justify-center text-white font-bold z-[100] glow-red hover:scale-110 active:scale-95 transition-all shadow-2xl">
+<span class="material-symbols-outlined text-[32px]">sos</span>
+<span class="text-[10px] font-bold">EMERGENCY</span>
+</button>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 bg-surface-container-low/60 backdrop-blur-xl border-t border-border-glass h-20 flex justify-around items-center px-xl pb-safe shadow-[0_-10px_30px_rgba(107,251,154,0.1)]">
+<a class="flex flex-col items-center justify-center text-primary font-bold p-2" href="#">
+<span class="material-symbols-outlined">explore</span>
+<span class="text-label-sm font-label-sm">Navigation</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant p-2 hover:bg-primary/10 rounded-xl transition-all" href="#">
+<span class="material-symbols-outlined">location_on</span>
+<span class="text-label-sm font-label-sm">Nearby</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant p-2 hover:bg-primary/10 rounded-xl transition-all" href="#">
+<span class="material-symbols-outlined">battery_5_bar</span>
+<span class="text-label-sm font-label-sm">Battery</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant p-2 hover:bg-primary/10 rounded-xl transition-all" href="#">
+<span class="material-symbols-outlined">list_alt</span>
+<span class="text-label-sm font-label-sm">Activity</span>
+</a>
+</nav>
+<script>
+    // Micro-interactions for the dashboard cards
+    document.querySelectorAll('.glass-card').forEach(card => {
+        card.addEventListener('mouseenter', () => {
+            card.style.transform = 'translateY(-4px)';
+            card.style.transition = 'transform 0.3s cubic-bezier(0.2, 0, 0.2, 1)';
+        });
+        card.addEventListener('mouseleave', () => {
+            card.style.transform = 'translateY(0)';
+        });
+    });
+
+    // 3D Hardware Preview Initialization
+    function initHardwarePreview() {
+        const container = document.getElementById('hardware-canvas-container');
+        if (!container) return;
+
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        
+        renderer.setSize(container.clientWidth, container.clientHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        container.appendChild(renderer.domElement);
+
+        // Cinematic Lighting Configuration
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.2);
+        scene.add(ambientLight);
+
+        // Key Light
+        const mainLight = new THREE.DirectionalLight(0xffffff, 1.0);
+        mainLight.position.set(5, 5, 10);
+        scene.add(mainLight);
+
+        // Rim Light (Primary Accent)
+        const rimLight = new THREE.PointLight(0x6bfb9a, 2.5);
+        rimLight.position.set(-8, 5, -5);
+        scene.add(rimLight);
+
+        // Fill Light (Soft)
+        const fillLight = new THREE.PointLight(0xffffff, 0.5);
+        fillLight.position.set(0, -10, 5);
+        scene.add(fillLight);
+
+        // Materials
+        const matteBlack = new THREE.MeshStandardMaterial({
+            color: 0x111111,
+            roughness: 0.85,
+            metalness: 0.1
+        });
+
+        const lensMaterial = new THREE.MeshPhysicalMaterial({
+            color: 0x000000,
+            metalness: 0.2,
+            roughness: 0.05,
+            transmission: 0.95,
+            transparent: true,
+            opacity: 0.7
+        });
+
+        const techAccentMaterial = new THREE.MeshStandardMaterial({
+            color: 0x000000,
+            roughness: 0.2,
+            metalness: 0.9
+        });
+
+        const cameraLensMaterial = new THREE.MeshPhysicalMaterial({
+            color: 0x222222,
+            metalness: 0.9,
+            roughness: 0.1,
+            clearcoat: 1.0
+        });
+
+        const glassesGroup = new THREE.Group();
+
+        // 1. Rectangular Frame Construction
+        const frameGroup = new THREE.Group();
+        
+        // Front Rim Boxy/Rectangular Look
+        const rimWidth = 1.35;
+        const rimHeight = 0.55;
+        const rimDepth = 0.08;
+        const rimGeom = new THREE.BoxGeometry(rimWidth, rimHeight, rimDepth);
+        
+        const leftRim = new THREE.Mesh(rimGeom, matteBlack);
+        leftRim.position.set(-0.7, 0, 0);
+        
+        const rightRim = new THREE.Mesh(rimGeom, matteBlack);
+        rightRim.position.set(0.7, 0, 0);
+        
+        frameGroup.add(leftRim, rightRim);
+
+        // Bridge
+        const bridgeGeom = new THREE.BoxGeometry(0.2, 0.1, 0.05);
+        const bridge = new THREE.Mesh(bridgeGeom, matteBlack);
+        bridge.position.set(0, 0.1, 0);
+        frameGroup.add(bridge);
+
+        // Lenses
+        const lensGeom = new THREE.PlaneGeometry(1.25, 0.45);
+        const leftLens = new THREE.Mesh(lensGeom, lensMaterial);
+        leftLens.position.set(-0.7, 0, 0.05);
+        const rightLens = new THREE.Mesh(lensGeom, lensMaterial);
+        rightLens.position.set(0.7, 0, 0.05);
+        frameGroup.add(leftLens, rightLens);
+
+        // 2. Hidden Sensor Windows on Front
+        const sensorGeom = new THREE.PlaneGeometry(0.1, 0.05);
+        const leftSensor = new THREE.Mesh(sensorGeom, techAccentMaterial);
+        leftSensor.position.set(-0.4, 0.2, 0.06);
+        const rightSensor = new THREE.Mesh(sensorGeom, techAccentMaterial);
+        rightSensor.position.set(0.4, 0.2, 0.06);
+        frameGroup.add(leftSensor, rightSensor);
+
+        glassesGroup.add(frameGroup);
+
+        // 3. Thicker Temples (Internal Electronics)
+        const templeLength = 2.8;
+        const templeHeight = 0.25;
+        const templeWidth = 0.15;
+        const templeGeom = new THREE.BoxGeometry(templeWidth, templeHeight, templeLength);
+        
+        const leftTemple = new THREE.Mesh(templeGeom, matteBlack);
+        leftTemple.position.set(-1.4, 0.05, -templeLength/2 + 0.04);
+        
+        const rightTemple = new THREE.Mesh(templeGeom, matteBlack);
+        rightTemple.position.set(1.4, 0.05, -templeLength/2 + 0.04);
+        
+        glassesGroup.add(leftTemple, rightTemple);
+
+        // 4. Wide-angle Cameras near hinges
+        const camHousingGeom = new THREE.CylinderGeometry(0.06, 0.06, 0.04, 32);
+        const camLensGeom = new THREE.SphereGeometry(0.03, 16, 16);
+
+        // Left Camera
+        const leftCamHousing = new THREE.Mesh(camHousingGeom, techAccentMaterial);
+        leftCamHousing.rotation.x = Math.PI / 2;
+        leftCamHousing.position.set(-1.3, 0.15, 0.08);
+        const leftCamLens = new THREE.Mesh(camLensGeom, cameraLensMaterial);
+        leftCamLens.position.set(-1.3, 0.15, 0.11);
+        
+        // Right Camera
+        const rightCamHousing = new THREE.Mesh(camHousingGeom, techAccentMaterial);
+        rightCamHousing.rotation.x = Math.PI / 2;
+        rightCamHousing.position.set(1.3, 0.15, 0.08);
+        const rightCamLens = new THREE.Mesh(camLensGeom, cameraLensMaterial);
+        rightCamLens.position.set(1.3, 0.15, 0.11);
+
+        glassesGroup.add(leftCamHousing, leftCamLens, rightCamHousing, rightCamLens);
+
+        // Final scene addition
+        scene.add(glassesGroup);
+        
+        // Positioning
+        camera.position.set(3, 1.5, 5);
+        camera.lookAt(0, 0, 0);
+
+        function animate() {
+            requestAnimationFrame(animate);
+            
+            // Controlled floating and rotation
+            const time = Date.now() * 0.001;
+            glassesGroup.rotation.y = Math.sin(time * 0.5) * 0.3 + 0.5; // Slight rotation to show perspective
+            glassesGroup.rotation.x = Math.sin(time * 0.3) * 0.05;
+            glassesGroup.position.y = Math.sin(time) * 0.1;
+            
+            renderer.render(scene, camera);
+        }
+
+        animate();
+
+        // Resize handler for perfect scaling within the glassmorphism card
+        window.addEventListener('resize', () => {
+            const width = container.clientWidth;
+            const height = container.clientHeight;
+            camera.aspect = width / height;
+            camera.updateProjectionMatrix();
+            renderer.setSize(width, height);
+        });
+    }
+
+    // Initialize 3D when DOM is ready
+    window.addEventListener('DOMContentLoaded', initHardwarePreview);
+</script>
+</body></html>

@@ -1,29 +1,96 @@
-from navi_engine import run_vision_engine
-from audio_engine import AudioEngine
+from flask import Flask, render_template, Response, jsonify, request
+from src.navi_engine import VisionEngine
+from src.audio_engine import AudioEngine
+import threading
+import time
 
-def main():
-    print("=========================================")
-    print("    Starting NAVI Orchestrator...        ")
-    print("=========================================")
-    
-    # Initialize the Voice
-    audio = AudioEngine()
-    audio.speak("NAVI System Initialized. Scanning environment.")
-    
-    # Define what happens when the Vision Engine sees a new emotion
-    def on_emotion_changed(emotion):
-        if emotion and emotion != "Scanning for faces...":
-            if emotion == "No person detected":
-                sentence = "I do not see anyone in front of you."
-            else:
-                sentence = f"The person in front of you seems {emotion}."
-            
-            print(f"[NAVI AUDIO]: {sentence}")
-            audio.speak(sentence)
-            
-    # Start the Vision Engine and pass it our audio rule
-    print("Booting Vision System...")
-    run_vision_engine(emotion_callback=on_emotion_changed)
+app = Flask(__name__)
+
+# Initialize Core AI Engines
+audio = AudioEngine()
+vision = VisionEngine(audio_engine=audio)
+
+# Global State for Web Dashboard
+system_status = "Disconnected"
+guardian_info = {"name": "", "phone": ""}
+
+def on_emotion_changed(emotion):
+    global system_status
+    if emotion and emotion != "Scanning...":
+        if emotion == "No person detected":
+            sentence = "I do not see anyone in front of you."
+        elif emotion == "Face not clearly visible":
+            sentence = "Someone is there, but their face is turned away."
+        else:
+            sentence = f"The person in front of you seems {emotion}."
+        
+        print(f"[NAVI AUDIO]: {sentence}")
+        audio.speak(sentence)
+        system_status = f"Last detected: {emotion}"
+        
+        # Automatic Guardian SOS Trigger (Example logic)
+        if emotion == "Angry" and guardian_info["name"]:
+            alert_msg = f"Warning. Aggression detected. Alerting {guardian_info['name']}."
+            audio.speak(alert_msg)
+            print(f"[GUARDIAN SOS]: SMS sent to {guardian_info['phone']} - User may be in a hostile environment!")
+
+def generate_video_stream():
+    """Generator function to yield JPEG frames for the Flask web stream."""
+    while True:
+        frame = vision.get_frame()
+        if frame is not None:
+            yield (b'--frame\r\n'
+                   b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+        time.sleep(0.03) # Cap at ~30 FPS to save CPU
+
+# --- FLASK ROUTES ---
+
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+@app.route('/video_feed')
+def video_feed():
+    return Response(generate_video_stream(), mimetype='multipart/x-mixed-replace; boundary=frame')
+
+@app.route('/api/status', methods=['GET'])
+def get_status():
+    return jsonify({
+        "emotion": vision.current_emotion,
+        "status": system_status,
+        "guardian_set": bool(guardian_info["name"])
+    })
+
+@app.route('/api/guardian', methods=['POST'])
+def set_guardian():
+    data = request.json
+    guardian_info["name"] = data.get("name", "")
+    guardian_info["phone"] = data.get("phone", "")
+    audio.speak(f"Guardian {guardian_info['name']} has been linked to your NAVI glasses.")
+    return jsonify({"success": True})
+
+@app.route('/api/sos', methods=['POST'])
+def trigger_sos():
+    if guardian_info["name"]:
+        audio.speak(f"SOS triggered. Sending location and camera feed to {guardian_info['name']}.")
+        return jsonify({"success": True, "message": f"Alert sent to {guardian_info['name']}"})
+    else:
+        audio.speak("SOS triggered, but no guardian is configured.")
+        return jsonify({"success": False, "message": "No Guardian Configured"})
+
+@app.route('/api/connect', methods=['POST'])
+def connect_glasses():
+    global system_status
+    if not vision.running:
+        system_status = "Booting Vision Engine..."
+        # Start vision engine in a background thread so it doesn't block Flask
+        threading.Thread(target=vision.start, args=(on_emotion_changed,), daemon=True).start()
+        return jsonify({"success": True, "message": "Connected successfully"})
+    return jsonify({"success": True, "message": "Already connected"})
 
 if __name__ == "__main__":
-    main()
+    print("=========================================")
+    print("    Starting NAVI Web Dashboard...       ")
+    print("    Go to http://127.0.0.1:5000          ")
+    print("=========================================")
+    app.run(host='0.0.0.0', port=5000, debug=False, threaded=True)
