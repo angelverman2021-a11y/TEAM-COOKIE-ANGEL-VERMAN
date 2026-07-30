@@ -215,6 +215,7 @@ class VisionEngine:
                     cam.set(cv2.CAP_PROP_FRAME_WIDTH, CAMERA_RESOLUTION[0])
                     cam.set(cv2.CAP_PROP_FRAME_HEIGHT, CAMERA_RESOLUTION[1])
                     cam.set(cv2.CAP_PROP_FPS, TARGET_FPS)
+                    cam.set(cv2.CAP_PROP_BUFFERSIZE, 1)
 
                     for attempt in range(8):
                         success, frame = cam.read()
@@ -276,13 +277,18 @@ class VisionEngine:
                     )
                     x1, y1, x2, y2 = best_person["box"]
                     h, w, _ = frame.shape
-                    person_crop = frame[max(0, y1):min(h, y2), max(0, x1):min(w, x2)]
                     
-                    if person_crop.size > 0:
+                    # Isolate the Head/Face region (top 40% of person bounding box)
+                    box_h = max(1, y2 - y1)
+                    head_y2 = y1 + int(box_h * 0.40)
+                    
+                    face_crop = frame[max(0, y1):min(h, head_y2), max(0, x1):min(w, x2)]
+                    
+                    if face_crop.size > 0:
                         self.is_analyzing_emotion = True
                         threading.Thread(
                             target=self._analyze_emotion_async,
-                            args=(person_crop.copy(), emotion_callback),
+                            args=(face_crop.copy(), emotion_callback),
                             daemon=True
                         ).start()
             else:

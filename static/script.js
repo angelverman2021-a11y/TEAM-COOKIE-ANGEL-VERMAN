@@ -37,7 +37,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 if(btnConnectMain) btnConnectMain.style.display = "none";
                 
                 if(videoStream) {
-                    videoStream.src = "/video_feed";
+                    videoStream.src = "/video_feed?t=" + Date.now();
                     videoStream.style.display = "block";
                 }
                 
