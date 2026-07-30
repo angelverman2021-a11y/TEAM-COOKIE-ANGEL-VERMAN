@@ -1,18 +1,154 @@
 import cv2
-from ultralytics import YOLO
-from deepface import DeepFace
+import numpy as np
 import threading
 import collections
 import warnings
+import queue
+import time
 import os
 import sys
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from config import CAMERA_INDEX, YOLO_MODEL_PATH, SMOOTHING_BUFFER_SIZE
+from config import (
+    CAMERA_INDEX,
+    CAMERA_RESOLUTION,
+    YOLO_MODEL_PATH,
+    CONFIDENCE_THRESHOLD,
+    IOU_THRESHOLD,
+    DEVICE,
+    TARGET_FPS,
+    SMOOTHING_BUFFER_SIZE
+)
 
 warnings.filterwarnings("ignore")
 
+
+class ObjectDetector:
+    """Class 1: ObjectDetector - Manages YOLO11 model loading and inference with CUDA/CPU support."""
+    def __init__(self, model_path=YOLO_MODEL_PATH, device=DEVICE, conf_thresh=CONFIDENCE_THRESHOLD, iou_thresh=IOU_THRESHOLD):
+        self.device = device
+        self.conf_thresh = conf_thresh
+        self.iou_thresh = iou_thresh
+        print(f"[VISION-DETECTOR] Loading model '{model_path}' on device '{self.device}'...")
+        from ultralytics import YOLO
+        self.model = YOLO(model_path)
+        # Move model to specified device
+        try:
+            self.model.to(self.device)
+            print(f"[VISION-DETECTOR] Model successfully assigned to {self.device.upper()}")
+        except Exception as e:
+            print(f"[VISION-DETECTOR] Warning setting device: {e}. Falling back to CPU.")
+            self.device = "cpu"
+            self.model.to("cpu")
+
+    def detect(self, frame):
+        """Runs object detection with confidence & NMS IOU thresholding."""
+        results = self.model(
+            frame,
+            conf=self.conf_thresh,
+            iou=self.iou_thresh,
+            device=self.device,
+            verbose=False
+        )
+        return results[0] if results else None
+
+
+class ObjectTracker:
+    """Class 2: ObjectTracker - Wraps ByteTrack for persistent ID tracking across frames."""
+    def __init__(self, detector: ObjectDetector):
+        self.detector = detector
+
+    def track(self, frame):
+        """Performs persistent object tracking with ByteTrack."""
+        results = self.detector.model.track(
+            frame,
+            persist=True,
+            tracker="bytetrack.yaml",
+            conf=self.detector.conf_thresh,
+            iou=self.detector.iou_thresh,
+            device=self.detector.device,
+            verbose=False
+        )
+        
+        tracked_objects = []
+        if results and len(results) > 0 and results[0].boxes is not None:
+            boxes = results[0].boxes
+            for box in boxes:
+                # Extract coordinates, confidence, class ID, and track ID
+                xyxy = box.xyxy[0].cpu().numpy()
+                conf = float(box.conf[0].cpu().numpy())
+                cls_id = int(box.cls[0].cpu().numpy())
+                
+                track_id = int(box.id[0].cpu().numpy()) if box.id is not None else None
+                
+                tracked_objects.append({
+                    "box": [int(xyxy[0]), int(xyxy[1]), int(xyxy[2]), int(xyxy[3])],
+                    "conf": conf,
+                    "cls": cls_id,
+                    "track_id": track_id,
+                    "label": results[0].names[cls_id] if hasattr(results[0], 'names') else str(cls_id)
+                })
+                
+        return tracked_objects
+
+
+class FrameProcessor:
+    """Class 3: FrameProcessor - Handles HUD overlays, bounding box drawing, FPS counter, and crops."""
+    def __init__(self):
+        self.fps_buffer = collections.deque(maxlen=30)
+        self.last_time = time.time()
+
+    def update_fps(self):
+        now = time.time()
+        dt = now - self.last_time
+        self.last_time = now
+        if dt > 0:
+            self.fps_buffer.append(1.0 / dt)
+        return sum(self.fps_buffer) / len(self.fps_buffer) if len(self.fps_buffer) > 0 else 0.0
+
+    def draw_hud(self, frame, tracked_objects, current_emotion):
+        """Renders bounding boxes with ByteTrack IDs and HUD metrics cleanly onto the frame."""
+        annotated = frame.copy()
+        current_fps = self.update_fps()
+
+        # Draw Tracked Bounding Boxes
+        for obj in tracked_objects:
+            x1, y1, x2, y2 = obj["box"]
+            track_id = obj["track_id"]
+            label = obj["label"]
+            conf = obj["conf"]
+
+            # Person gets primary green, other objects cyan
+            color = (154, 251, 107) if obj["cls"] == 0 else (238, 211, 34)
+            
+            # Bounding Box
+            cv2.rectangle(annotated, (x1, y1), (x2, y2), color, 2)
+            
+            # Label & Track ID Tag
+            id_str = f"ID:{track_id} " if track_id is not None else ""
+            tag = f"{id_str}{label.upper()} {int(conf * 100)}%"
+            
+            # Label background box
+            (tw, th), _ = cv2.getTextSize(tag, cv2.FONT_HERSHEY_SIMPLEX, 0.5, 1)
+            cv2.rectangle(annotated, (x1, max(0, y1 - 20)), (x1 + tw + 6, max(th + 4, y1)), color, -1)
+            cv2.putText(annotated, tag, (x1 + 3, max(th + 2, y1 - 4)), 
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1, cv2.LINE_AA)
+
+        # Dashboard Top Banner
+        cv2.rectangle(annotated, (10, 10), (480, 75), (0, 0, 0), -1)
+        cv2.putText(annotated, f"NAVI MOOD: {current_emotion.upper()}", (20, 45), 
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0, 255, 0), 2, cv2.LINE_AA)
+        
+        # FPS & Hardware Banner
+        fps_color = (0, 255, 0) if current_fps >= 25 else (0, 255, 255)
+        cv2.putText(annotated, f"FPS: {current_fps:.1f} | DEVICE: {DEVICE.upper()}", (20, 68), 
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.45, fps_color, 1, cv2.LINE_AA)
+
+        return annotated
+
+
 class VisionEngine:
+    """Class 4: VisionEngine - Main Orchestrator providing high-FPS decoupled processing and Flask integration."""
     def __init__(self, audio_engine):
         self.audio = audio_engine
         self.current_emotion = "Scanning..."
@@ -21,38 +157,113 @@ class VisionEngine:
         self.running = False
         self.camera = None
         self.latest_frame = None
-        self.is_analyzing = False
+        self.is_analyzing_emotion = False
         self.frame_count = 0
-        
-        print("[VISION] Initializing YOLO...")
-        self.yolo_model = YOLO(YOLO_MODEL_PATH)
-        
-        print("[VISION] Initializing DeepFace Engine...")
-        # We pre-load the model here so it doesn't stutter on the first frame
+
+        # Initialize AI Components
+        self.detector = ObjectDetector(model_path=YOLO_MODEL_PATH, device=DEVICE)
+        self.tracker = ObjectTracker(self.detector)
+        self.processor = FrameProcessor()
+
+        # Threading & Decoupled Inference Buffers
+        self.inference_queue = queue.Queue(maxsize=1)
+        self.latest_tracked_objects = []
+        self.lock = threading.Lock()
+
+        # DeepFace Warmup
+        print("[VISION] Warming up DeepFace Engine...")
         try:
-            # Dummy analysis to warm up the model
-            import numpy as np
+            from deepface import DeepFace
             dummy_img = np.zeros((224, 224, 3), dtype=np.uint8)
             DeepFace.analyze(dummy_img, actions=['emotion'], enforce_detection=False, detector_backend='opencv')
         except Exception as e:
             print(f"[VISION] DeepFace warmup notice: {e}")
 
-    def start(self, emotion_callback):
-        print(f"[VISION] Opening Webcam (Trying indices 0, 1, 2)...")
+    def _ai_inference_worker(self, emotion_callback):
+        """Worker Thread: Handles YOLO11 + ByteTrack and DeepFace inference continuously in background."""
+        from deepface import DeepFace
         
-        # Try multiple camera indices with warm-up retries
+        while self.running:
+            try:
+                frame = self.inference_queue.get(timeout=0.2)
+            except queue.Empty:
+                continue
+
+            # Run Object Tracking
+            try:
+                tracked = self.tracker.track(frame)
+                with self.lock:
+                    self.latest_tracked_objects = tracked
+                
+                person_objs = [obj for obj in tracked if obj["cls"] == 0]
+
+                if person_objs:
+                    # Run DeepFace emotion analysis on the cropped person region whenever available
+                    if not self.is_analyzing_emotion:
+                        # Select the largest person box by area
+                        best_person = max(
+                            person_objs, 
+                            key=lambda o: (o["box"][2] - o["box"][0]) * (o["box"][3] - o["box"][1])
+                        )
+                        x1, y1, x2, y2 = best_person["box"]
+                        h, w, _ = frame.shape
+                        person_crop = frame[max(0, y1):min(h, y2), max(0, x1):min(w, x2)]
+                        
+                        if person_crop.size > 0:
+                            self.is_analyzing_emotion = True
+                            
+                            def analyze_bg(crop_img):
+                                try:
+                                    analysis = DeepFace.analyze(
+                                        crop_img,
+                                        actions=['emotion'],
+                                        enforce_detection=False,
+                                        detector_backend='opencv'
+                                    )
+                                    if isinstance(analysis, list):
+                                        emotion = analysis[0]['dominant_emotion']
+                                    else:
+                                        emotion = analysis['dominant_emotion']
+                                        
+                                    self.emotion_history.append(emotion)
+                                    if len(self.emotion_history) > 0:
+                                        self.current_emotion = max(set(self.emotion_history), key=self.emotion_history.count)
+                                except Exception as e:
+                                    pass
+                                finally:
+                                    self.is_analyzing_emotion = False
+
+                            threading.Thread(target=analyze_bg, args=(person_crop.copy(),), daemon=True).start()
+                else:
+                    self.current_emotion = "No person detected"
+
+                # Emotion Callback Trigger
+                if self.current_emotion != self.previous_emotion:
+                    if emotion_callback:
+                        emotion_callback(self.current_emotion)
+                    self.previous_emotion = self.current_emotion
+
+            except Exception as e:
+                print(f"[VISION-WORKER ERROR] {e}")
+
+    def start(self, emotion_callback):
+        """Starts main camera acquisition and rendering loop."""
+        print(f"[VISION] Opening Webcam (Trying indices {CAMERA_INDEX}, 1, 2, 0)...")
+        
         self.camera = None
-        import time
         for i in [CAMERA_INDEX, 1, 2, 0]:
-            # Try DSHOW first, then default MSMF fallback
             for backend in [cv2.CAP_DSHOW, None]:
                 cam = cv2.VideoCapture(i, backend) if backend is not None else cv2.VideoCapture(i)
                 if cam.isOpened():
-                    # Warm-up retry loop: Webcams often take ~100-300ms to output the first valid frame
+                    # Set resolution & FPS target
+                    cam.set(cv2.CAP_PROP_FRAME_WIDTH, CAMERA_RESOLUTION[0])
+                    cam.set(cv2.CAP_PROP_FRAME_HEIGHT, CAMERA_RESOLUTION[1])
+                    cam.set(cv2.CAP_PROP_FPS, TARGET_FPS)
+
                     for attempt in range(8):
                         success, frame = cam.read()
                         if success and frame is not None:
-                            print(f"[VISION] Successfully connected to camera index {i} (attempt {attempt+1})")
+                            print(f"[VISION] Connected to camera index {i} on attempt {attempt+1}")
                             self.camera = cam
                             break
                         time.sleep(0.1)
@@ -61,105 +272,66 @@ class VisionEngine:
                 cam.release()
             if self.camera is not None:
                 break
-            
+
         if self.camera is None or not self.camera.isOpened():
             msg = "Error. Could not connect to camera. Please check your webcam."
             print(f"[ERROR] {msg}")
             self.current_emotion = "CAMERA FAILED"
             
-            import numpy as np
-            error_frame = np.zeros((480, 640, 3), dtype=np.uint8)
-            error_frame[:] = (0, 0, 150) # Dark red background
+            error_frame = np.zeros((CAMERA_RESOLUTION[1], CAMERA_RESOLUTION[0], 3), dtype=np.uint8)
+            error_frame[:] = (0, 0, 150)
             cv2.putText(error_frame, "CAMERA DISCONNECTED", (50, 240), 
-                        cv2.FONT_HERSHEY_SIMPLEX, 1.5, (255, 255, 255), 3)
+                        cv2.FONT_HERSHEY_SIMPLEX, 1.2, (255, 255, 255), 3)
             self.latest_frame = error_frame
-            
             self.audio.speak(msg)
             return
 
         self.running = True
         self.audio.speak("Vision system online. Streaming to dashboard.")
 
+        # Start AI Background Worker Thread
+        worker_thread = threading.Thread(target=self._ai_inference_worker, args=(emotion_callback,), daemon=True)
+        worker_thread.start()
+
+        target_dt = 1.0 / TARGET_FPS
+
         while self.running:
+            t0 = time.time()
             success, frame = self.camera.read()
             if not success:
                 msg = "Camera disconnected."
                 print(f"[ERROR] {msg}")
                 self.audio.speak(msg)
                 break
-                
+
             self.frame_count += 1
-            self._process_frame(frame, emotion_callback)
-                
-        self.camera.release()
-        
-    def _analyze_emotion_in_background(self, frame_to_analyze):
-        try:
-            # RetinaFace is highly accurate for face cropping.
-            analysis = DeepFace.analyze(
-                frame_to_analyze, 
-                actions=['emotion'], 
-                enforce_detection=False,
-                detector_backend='retinaface'
-            )
-            if isinstance(analysis, list):
-                emotion = analysis[0]['dominant_emotion']
-            else:
-                emotion = analysis['dominant_emotion']
-                
-            self.emotion_history.append(emotion)
-            
-            if len(self.emotion_history) > 0:
-                self.current_emotion = max(set(self.emotion_history), key=self.emotion_history.count)
-                
-        except Exception as e:
-            pass
-        finally:
-            self.is_analyzing = False
-            
-    def _process_frame(self, frame, emotion_callback):
-        try:
-            # Run YOLO to find bodies
-            results = self.yolo_model(frame, verbose=False)
-            annotated_frame = results[0].plot()
-            
-            person_found = any(int(box.cls[0]) == 0 for box in results[0].boxes)
-                    
-            if person_found:
-                # Run DeepFace in a background thread every 10 frames to avoid lagging the video
-                if self.frame_count % 10 == 0 and not self.is_analyzing:
-                    self.is_analyzing = True
-                    frame_copy = frame.copy()
-                    thread = threading.Thread(target=self._analyze_emotion_in_background, args=(frame_copy,))
-                    thread.daemon = True
-                    thread.start()
-            else:
-                self.current_emotion = "No person detected"
 
-            # Trigger callback
-            if self.current_emotion != self.previous_emotion:
-                if emotion_callback:
-                    emotion_callback(self.current_emotion)
-                self.previous_emotion = self.current_emotion
+            # Non-blocking push to AI inference queue
+            if not self.inference_queue.full():
+                self.inference_queue.put(frame)
 
-            # UI Overlay for Web Stream
-            cv2.rectangle(annotated_frame, (10, 10), (450, 70), (0, 0, 0), -1)
-            cv2.putText(annotated_frame, f"NAVI MOOD: {self.current_emotion.upper()}", (20, 50), 
-                        cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+            # Get latest tracked objects safely
+            with self.lock:
+                tracked = list(self.latest_tracked_objects)
 
-            # Store latest frame for Flask streaming instead of cv2.imshow
+            # Render HUD overlays instantly on current frame (High FPS)
+            annotated_frame = self.processor.draw_hud(frame, tracked, self.current_emotion)
             self.latest_frame = annotated_frame
-        except Exception as e:
-            import traceback
-            print(f"[VISION PROCESS_FRAME ERROR] {e}")
-            traceback.print_exc()
-        
+
+            # Control loop speed for target FPS
+            elapsed = time.time() - t0
+            sleep_time = target_dt - elapsed
+            if sleep_time > 0:
+                time.sleep(sleep_time)
+
+        self.camera.release()
+
     def get_frame(self):
-        """Encodes the latest frame as JPEG for web streaming."""
+        """Encodes latest frame as JPEG bytes for Flask MJPEG stream."""
         if self.latest_frame is None:
             return None
         ret, buffer = cv2.imencode('.jpg', self.latest_frame)
-        return buffer.tobytes()
-        
+        return buffer.tobytes() if ret else None
+
     def stop(self):
         self.running = False
