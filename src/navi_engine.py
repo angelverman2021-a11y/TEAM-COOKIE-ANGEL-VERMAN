@@ -157,9 +157,10 @@ class VisionEngine:
         self.emotion_history = collections.deque(maxlen=SMOOTHING_BUFFER_SIZE)
         self.running = False
         self.camera = None
-        self.latest_frame = None
+        self.latest_jpeg_bytes = None
         self.is_analyzing_emotion = False
         self.frame_count = 0
+        self.lock = threading.Lock()
 
         # Initialize AI Components
         self.detector = ObjectDetector(model_path=YOLO_MODEL_PATH, device=DEVICE)
@@ -204,12 +205,12 @@ class VisionEngine:
             self.is_analyzing_emotion = False
 
     def start(self, emotion_callback):
-        """Starts main camera acquisition and rendering loop."""
-        print(f"[VISION] Opening Webcam (Trying indices {CAMERA_INDEX}, 1, 2, 0)...")
+        """Starts main camera acquisition and rendering loop with retry tolerance."""
+        print(f"[VISION] Opening Webcam (Trying indices {CAMERA_INDEX}, 1, 2, 0, 3, -1)...")
         
         self.camera = None
-        for i in [CAMERA_INDEX, 1, 2, 0]:
-            for backend in [cv2.CAP_DSHOW, None]:
+        for i in [CAMERA_INDEX, 1, 2, 0, 3, -1]:
+            for backend in [cv2.CAP_DSHOW, cv2.CAP_MSMF, None]:
                 cam = cv2.VideoCapture(i, backend) if backend is not None else cv2.VideoCapture(i)
                 if cam.isOpened():
                     cam.set(cv2.CAP_PROP_FRAME_WIDTH, CAMERA_RESOLUTION[0])
@@ -217,7 +218,7 @@ class VisionEngine:
                     cam.set(cv2.CAP_PROP_FPS, TARGET_FPS)
                     cam.set(cv2.CAP_PROP_BUFFERSIZE, 1)
 
-                    for attempt in range(8):
+                    for attempt in range(10):
                         success, frame = cam.read()
                         if success and frame is not None:
                             print(f"[VISION] Connected to camera index {i} on attempt {attempt+1}")
@@ -239,7 +240,10 @@ class VisionEngine:
             error_frame[:] = (0, 0, 150)
             cv2.putText(error_frame, "CAMERA DISCONNECTED", (50, 240), 
                         cv2.FONT_HERSHEY_SIMPLEX, 1.2, (255, 255, 255), 3)
-            self.latest_frame = error_frame
+            ret, buf = cv2.imencode('.jpg', error_frame)
+            if ret:
+                with self.lock:
+                    self.latest_jpeg_bytes = buf.tobytes()
             self.audio.speak(msg)
             return
 
@@ -247,16 +251,22 @@ class VisionEngine:
         self.audio.speak("Vision system online. Streaming to dashboard.")
 
         target_dt = 1.0 / TARGET_FPS
+        consecutive_failures = 0
 
         while self.running:
             t0 = time.time()
             success, frame = self.camera.read()
-            if not success:
-                msg = "Camera disconnected."
-                print(f"[ERROR] {msg}")
-                self.audio.speak(msg)
-                break
-
+            if not success or frame is None:
+                consecutive_failures += 1
+                if consecutive_failures > 15:
+                    msg = "Camera disconnected."
+                    print(f"[ERROR] {msg}")
+                    self.audio.speak(msg)
+                    break
+                time.sleep(0.02)
+                continue
+            
+            consecutive_failures = 0
             self.frame_count += 1
 
             # High-speed CUDA Object Tracking
@@ -296,7 +306,12 @@ class VisionEngine:
 
             # Draw HUD Overlays
             annotated_frame = self.processor.draw_hud(frame, tracked, self.current_emotion)
-            self.latest_frame = annotated_frame
+            
+            # Encode frame to JPEG safely inside lock
+            ret, buf = cv2.imencode('.jpg', annotated_frame)
+            if ret:
+                with self.lock:
+                    self.latest_jpeg_bytes = buf.tobytes()
 
             # Target FPS sleep
             elapsed = time.time() - t0
@@ -307,11 +322,9 @@ class VisionEngine:
         self.camera.release()
 
     def get_frame(self):
-        """Encodes latest frame as JPEG bytes for Flask MJPEG stream."""
-        if self.latest_frame is None:
-            return None
-        ret, buffer = cv2.imencode('.jpg', self.latest_frame)
-        return buffer.tobytes() if ret else None
+        """Returns latest JPEG bytes for Flask MJPEG stream in a 100% thread-safe manner."""
+        with self.lock:
+            return self.latest_jpeg_bytes
 
     def stop(self):
         self.running = False
