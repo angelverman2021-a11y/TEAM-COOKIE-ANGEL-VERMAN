@@ -8,6 +8,8 @@ import os
 import sys
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from src.navigation_engine import NavigationEngine
+from src.scene_engine import SceneUnderstandingEngine
 from config import (
     CAMERA_INDEX,
     CAMERA_RESOLUTION,
@@ -16,29 +18,123 @@ from config import (
     IOU_THRESHOLD,
     DEVICE,
     TARGET_FPS,
-    SMOOTHING_BUFFER_SIZE
+    SMOOTHING_BUFFER_SIZE,
+    DEBUG_MODE,
+    AI_INPUT_SIZE
 )
 
 warnings.filterwarnings("ignore")
 
+class CameraManager:
+    """Handles reliable webcam initialization, frame acquisition, and error recovery in a dedicated thread."""
+    def __init__(self):
+        self.camera = None
+        self.running = False
+        self.current_frame = None
+        self.frame_lock = threading.Lock()
+        
+        # Diagnostics
+        self.fps_buffer = collections.deque(maxlen=30)
+        self.last_time = time.time()
+        self.active_index = -1
+        self.active_backend = "None"
+        self.active_resolution = (0, 0)
+        self.status = "Stopped"
 
-class ObjectDetector:
-    """Class 1: ObjectDetector - Manages YOLO11 model loading and inference with CUDA/CPU support."""
-    def __init__(self, model_path=YOLO_MODEL_PATH, device=DEVICE, conf_thresh=CONFIDENCE_THRESHOLD, iou_thresh=IOU_THRESHOLD):
+    def _update_fps(self):
+        now = time.time()
+        dt = now - self.last_time
+        self.last_time = now
+        if dt > 0:
+            self.fps_buffer.append(1.0 / dt)
+        return sum(self.fps_buffer) / len(self.fps_buffer) if len(self.fps_buffer) > 0 else 0.0
+
+    def start(self):
+        self.running = True
+        self.status = "Initializing"
+        threading.Thread(target=self._camera_loop, daemon=True).start()
+
+    def _initialize_camera(self):
+        """Automatically test indices and backends to find a working camera."""
+        indices_to_try = [CAMERA_INDEX, 1, 2, 0, 3, -1]
+        backends_to_try = [cv2.CAP_DSHOW, cv2.CAP_MSMF, None]
+        
+        for idx in indices_to_try:
+            for backend in backends_to_try:
+                if backend is not None:
+                    cam = cv2.VideoCapture(idx, backend)
+                    backend_name = "DSHOW" if backend == cv2.CAP_DSHOW else "MSMF"
+                else:
+                    cam = cv2.VideoCapture(idx)
+                    backend_name = "DEFAULT"
+                
+                if cam.isOpened():
+                    cam.set(cv2.CAP_PROP_FRAME_WIDTH, CAMERA_RESOLUTION[0])
+                    cam.set(cv2.CAP_PROP_FRAME_HEIGHT, CAMERA_RESOLUTION[1])
+                    cam.set(cv2.CAP_PROP_FPS, TARGET_FPS)
+                    cam.set(cv2.CAP_PROP_BUFFERSIZE, 1)
+
+                    # Test capture
+                    for _ in range(5):
+                        success, frame = cam.read()
+                        if success and frame is not None:
+                            self.active_index = idx
+                            self.active_backend = backend_name
+                            self.active_resolution = (int(cam.get(cv2.CAP_PROP_FRAME_WIDTH)), int(cam.get(cv2.CAP_PROP_FRAME_HEIGHT)))
+                            self.status = "Active"
+                            print(f"[CAMERA] Connected idx:{idx} backend:{backend_name} res:{self.active_resolution}")
+                            return cam
+                        time.sleep(0.05)
+                cam.release()
+        self.status = "Failed"
+        return None
+
+    def _camera_loop(self):
+        self.camera = self._initialize_camera()
+        
+        while self.running:
+            if self.camera is None or not self.camera.isOpened():
+                self.status = "Reconnecting..."
+                time.sleep(1.0)
+                self.camera = self._initialize_camera()
+                continue
+
+            success, frame = self.camera.read()
+            if success and frame is not None:
+                with self.frame_lock:
+                    self.current_frame = frame.copy()
+                self._update_fps()
+            else:
+                self.status = "Frame Read Failed"
+                self.camera.release()
+                self.camera = None
+
+    def get_frame(self):
+        with self.frame_lock:
+            return self.current_frame.copy() if self.current_frame is not None else None
+
+    def stop(self):
+        self.running = False
+        if self.camera:
+            self.camera.release()
+
+
+class Detector:
+    """Manages YOLO11 model loading and inference with CUDA/CPU support."""
+    def __init__(self, model_path=YOLO_MODEL_PATH, device=DEVICE, conf_thresh=CONFIDENCE_THRESHOLD, iou_thresh=IOU_THRESHOLD, img_size=AI_INPUT_SIZE):
         self.device = device
         self.conf_thresh = conf_thresh
         self.iou_thresh = iou_thresh
+        self.img_size = img_size
         print(f"[VISION-DETECTOR] Loading model '{model_path}' on device '{self.device}'...")
         from ultralytics import YOLO
         self.model = YOLO(model_path)
         
         try:
             self.model.to(self.device)
-            print(f"[VISION-DETECTOR] Model successfully assigned to {self.device.upper()}")
-            # Warm up CUDA memory allocation
-            dummy = np.zeros((480, 640, 3), dtype=np.uint8)
+            # Warm up CUDA
+            dummy = np.zeros((self.img_size, self.img_size, 3), dtype=np.uint8)
             self.model(dummy, conf=self.conf_thresh, verbose=False)
-            print(f"[VISION-DETECTOR] CUDA warm-up complete!")
         except Exception as e:
             print(f"[VISION-DETECTOR] Device warning: {e}. Falling back to CPU.")
             self.device = "cpu"
@@ -46,22 +142,28 @@ class ObjectDetector:
 
     def detect(self, frame):
         """Runs object detection with confidence & NMS IOU thresholding."""
-        results = self.model(
-            frame,
-            conf=self.conf_thresh,
-            iou=self.iou_thresh,
-            device=self.device,
-            verbose=False
-        )
-        return results[0] if results else None
+        try:
+            results = self.model(
+                frame,
+                conf=self.conf_thresh,
+                iou=self.iou_thresh,
+                imgsz=self.img_size,
+                device=self.device,
+                verbose=False
+            )
+            return results[0] if results else None
+        except Exception as e:
+            print(f"[VISION-DETECTOR] Inference Error: {e}")
+            return None
 
 
-class ObjectTracker:
-    """Class 2: ObjectTracker - Persistent object tracking across frames using pure Python IOU (prevents PyTorch CUDA deadlocks)."""
-    def __init__(self, detector: ObjectDetector):
-        self.detector = detector
+class Tracker:
+    """Persistent object tracking with EMA smoothing to prevent bounding box flicker."""
+    def __init__(self, max_lost_frames=10):
         self.next_id = 1
-        self.tracked_objects = {} # id -> {"box": [x1,y1,x2,y2], "conf": conf, "cls": cls_id, "label": label, "missed": 0}
+        self.tracked_objects = {} 
+        self.max_lost_frames = max_lost_frames
+        self.alpha = 0.5  # EMA smoothing factor
 
     def _compute_iou(self, box1, box2):
         x1 = max(box1[0], box2[0])
@@ -74,31 +176,18 @@ class ObjectTracker:
         area2 = (box2[2] - box2[0]) * (box2[3] - box2[1])
         return intersection / float(area1 + area2 - intersection)
 
-    def track(self, frame):
-        """Performs detection and purely python-based IOU tracking."""
-        results = self.detector.model(
-            frame,
-            conf=self.detector.conf_thresh,
-            iou=self.detector.iou_thresh,
-            device=self.detector.device,
-            verbose=False
-        )
-        
-        current_detections = []
-        if results and len(results) > 0 and results[0].boxes is not None:
-            boxes = results[0].boxes
-            for box in boxes:
-                xyxy = box.xyxy[0].cpu().numpy()
-                conf = float(box.conf[0].cpu().numpy())
-                cls_id = int(box.cls[0].cpu().numpy())
-                label = results[0].names[cls_id] if hasattr(results[0], 'names') else str(cls_id)
-                current_detections.append({"box": [int(xyxy[0]), int(xyxy[1]), int(xyxy[2]), int(xyxy[3])], "conf": conf, "cls": cls_id, "label": label})
-        
-        # Match detections to existing tracks
+    def _smooth_box(self, old_box, new_box):
+        return [
+            int(old_box[0] * (1 - self.alpha) + new_box[0] * self.alpha),
+            int(old_box[1] * (1 - self.alpha) + new_box[1] * self.alpha),
+            int(old_box[2] * (1 - self.alpha) + new_box[2] * self.alpha),
+            int(old_box[3] * (1 - self.alpha) + new_box[3] * self.alpha)
+        ]
+
+    def update(self, current_detections):
         new_tracked = {}
         for det in current_detections:
-            best_id = None
-            best_iou = 0.3
+            best_id, best_iou = None, 0.3
             for tid, tobj in self.tracked_objects.items():
                 if tobj["cls"] != det["cls"]: continue
                 iou = self._compute_iou(det["box"], tobj["box"])
@@ -107,6 +196,7 @@ class ObjectTracker:
                     best_id = tid
             
             if best_id is not None:
+                det["box"] = self._smooth_box(self.tracked_objects[best_id]["box"], det["box"])
                 new_tracked[best_id] = det
                 new_tracked[best_id]["missed"] = 0
                 del self.tracked_objects[best_id]
@@ -115,9 +205,8 @@ class ObjectTracker:
                 new_tracked[self.next_id]["missed"] = 0
                 self.next_id += 1
                 
-        # Keep missed objects for 5 frames
         for tid, tobj in self.tracked_objects.items():
-            if tobj["missed"] < 5:
+            if tobj["missed"] < self.max_lost_frames:
                 tobj["missed"] += 1
                 new_tracked[tid] = tobj
 
@@ -125,93 +214,125 @@ class ObjectTracker:
         
         out = []
         for tid, obj in self.tracked_objects.items():
-            out.append({
-                "box": obj["box"],
-                "conf": obj["conf"],
-                "cls": obj["cls"],
-                "track_id": tid,
-                "label": obj["label"]
-            })
+            out.append({"box": obj["box"], "conf": obj["conf"], "cls": obj["cls"], "track_id": tid, "label": obj["label"]})
         return out
 
 
+class DetectionManager:
+    """Orchestrates AI detection, tracking, and metric logging."""
+    def __init__(self):
+        self.detector = Detector()
+        self.tracker = Tracker(max_lost_frames=10)
+        self.total_detections = 0
+        self.lost_tracks = 0
+        self.avg_conf = 0.0
+
+    def process_frame(self, frame):
+        result = self.detector.detect(frame)
+        current_detections = []
+        
+        if result and result.boxes is not None:
+            for box in result.boxes:
+                xyxy = box.xyxy[0].cpu().numpy()
+                conf = float(box.conf[0].cpu().numpy())
+                cls_id = int(box.cls[0].cpu().numpy())
+                label = result.names[cls_id] if hasattr(result, 'names') else str(cls_id)
+                current_detections.append({
+                    "box": [int(xyxy[0]), int(xyxy[1]), int(xyxy[2]), int(xyxy[3])], 
+                    "conf": conf, "cls": cls_id, "label": label
+                })
+        
+        tracked = self.tracker.update(current_detections)
+        
+        # Update metrics
+        self.total_detections += len(current_detections)
+        if len(current_detections) > 0:
+            avg = sum(d["conf"] for d in current_detections) / len(current_detections)
+            self.avg_conf = (self.avg_conf * 0.9) + (avg * 0.1)
+            
+        self.lost_tracks = sum(1 for obj in self.tracker.tracked_objects.values() if obj["missed"] > 0)
+        return tracked
+
 
 class FrameProcessor:
-    """Class 3: FrameProcessor - Handles HUD overlays, bounding box drawing, and FPS counter."""
-    def __init__(self):
-        self.fps_buffer = collections.deque(maxlen=30)
-        self.last_time = time.time()
-
-    def update_fps(self):
-        now = time.time()
-        dt = now - self.last_time
-        self.last_time = now
-        if dt > 0:
-            self.fps_buffer.append(1.0 / dt)
-        return sum(self.fps_buffer) / len(self.fps_buffer) if len(self.fps_buffer) > 0 else 0.0
-
-    def draw_hud(self, frame, tracked_objects, current_emotion):
-        """Renders bounding boxes with ByteTrack IDs and HUD metrics cleanly onto the frame."""
+    """Handles HUD overlays, bounding box drawing."""
+    def draw_hud(self, frame, tracked_objects, current_emotion, nav_status=None):
         annotated = frame.copy()
-        current_fps = self.update_fps()
 
-        # Draw Tracked Bounding Boxes
+        # Draw Tracked Bounding Boxes safely
         for obj in tracked_objects:
             x1, y1, x2, y2 = obj["box"]
             track_id = obj["track_id"]
-            label = obj["label"]
-            conf = obj["conf"]
-
-            # Person gets pure neon green (BGR format: 0, 255, 100), other objects cyan (255, 200, 0)
-            color = (0, 255, 100) if obj["cls"] == 0 else (255, 200, 0)
+            label = obj["label"].upper()
             
-            # Bounding Box
+            # Default formatting
+            color = (0, 255, 100) # Green (Safe)
+            dist_str = ""
+            pos_str = ""
+            
+            if nav_status and "nav_metrics" in nav_status and track_id in nav_status["nav_metrics"]:
+                nav_data = nav_status["nav_metrics"][track_id]
+                dist = nav_data["dist"]
+                pos = nav_data["pos"].upper()
+                dist_str = f" | DIST:{dist:.2f}"
+                pos_str = f" | {pos}"
+                
+                # Check danger level mapping if collision data exists (we fetch from nav_status.danger_level for now, but that is global)
+                # Wait, danger_level is global in nav_status. The individual object doesn't have danger_level returned via api yet.
+                # I'll just map color by distance thresholds here since individual TTC isn't available per object in HUD yet.
+                if dist > 0.8:
+                    color = (0, 0, 255) # Red (Critical/Very Close)
+                elif dist > 0.6:
+                    color = (0, 255, 255) # Yellow (Warning)
+                elif dist > 0.4:
+                    color = (255, 255, 0) # Cyan (Caution - Note BGR format: 255 B, 255 G, 0 R -> Cyan)
+
+            # Draw Box
             cv2.rectangle(annotated, (x1, y1), (x2, y2), color, 2)
             
-            # Label & Track ID Tag
-            id_str = f"ID:{track_id} " if track_id is not None else ""
-            tag = f"{id_str}{label.upper()} {int(conf * 100)}%"
-            
-            # Label background box
+            # Draw Tag (No ID, no duplicates)
+            tag = f"{label}{dist_str}{pos_str}"
             (tw, th), _ = cv2.getTextSize(tag, cv2.FONT_HERSHEY_SIMPLEX, 0.5, 1)
             cv2.rectangle(annotated, (x1, max(0, y1 - 20)), (x1 + tw + 6, max(th + 4, y1)), color, -1)
+            # Text color logic (black on bright colors, white on dark colors)
+            text_color = (0, 0, 0) if color != (0, 0, 255) else (255, 255, 255)
             cv2.putText(annotated, tag, (x1 + 3, max(th + 2, y1 - 4)), 
-                        cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1, cv2.LINE_AA)
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.5, text_color, 1, cv2.LINE_AA)
 
-        # Dashboard Top Banner
-        cv2.rectangle(annotated, (10, 10), (480, 75), (0, 0, 0), -1)
-        cv2.putText(annotated, f"NAVI MOOD: {current_emotion.upper()}", (20, 45), 
-                    cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0, 255, 0), 2, cv2.LINE_AA)
-        
-        # FPS & Hardware Banner
-        fps_color = (0, 255, 0) if current_fps >= 25 else (0, 255, 255)
-        cv2.putText(annotated, f"FPS: {current_fps:.1f} | DEVICE: {DEVICE.upper()}", (20, 68), 
-                    cv2.FONT_HERSHEY_SIMPLEX, 0.45, fps_color, 1, cv2.LINE_AA)
-
+        # Removed the permanent Top Banner and Debug HUD logic for a clean feed.
         return annotated
 
 
 class VisionEngine:
-    """Class 4: VisionEngine - Main Orchestrator providing live high-FPS streaming and Flask integration."""
+    """Main Orchestrator providing live high-FPS streaming decoupled from AI processing."""
     def __init__(self, audio_engine):
         self.audio = audio_engine
+        self.running = False
+        self.lock = threading.Lock()
+        self.diagnostics = {}
+        
+        self.frame_ready_event = threading.Event()
+        
+        self.latest_jpeg_bytes = None
+        self.camera_manager = CameraManager()
+        self.processor = FrameProcessor()
+        
+        # AI State (Thread-Safe)
+        self.ai_lock = threading.Lock()
         self.current_emotion = "Scanning..."
         self.previous_emotion = None
         self.emotion_history = collections.deque(maxlen=SMOOTHING_BUFFER_SIZE)
-        self.running = False
-        self.camera = None
-        self.latest_jpeg_bytes = None
+        self.latest_tracked = []
         self.is_analyzing_emotion = False
-        self.frame_count = 0
-        self.lock = threading.Lock()
-        self.frame_ready_event = threading.Event()
+        
+        # Diagnostics
+        self.ai_time_ms = 0.0
 
-        # Initialize AI Components
-        self.detector = ObjectDetector(model_path=YOLO_MODEL_PATH, device=DEVICE)
-        self.tracker = ObjectTracker(self.detector)
-        self.processor = FrameProcessor()
-
-        # DeepFace Warmup
+        # Initialize AI Models (Takes time, so do it here)
+        self.ai_manager = DetectionManager()
+        self.navigation = NavigationEngine(self.audio, self)
+        self.scene_understanding = SceneUnderstandingEngine(self.audio)
+        
         print("[VISION] Warming up DeepFace Engine...")
         try:
             from deepface import DeepFace
@@ -221,7 +342,6 @@ class VisionEngine:
             print(f"[VISION] DeepFace warmup notice: {e}")
 
     def _analyze_emotion_async(self, person_crop, emotion_callback):
-        """Asynchronous background worker for DeepFace emotion classification."""
         from deepface import DeepFace
         try:
             analysis = DeepFace.analyze(
@@ -230,13 +350,10 @@ class VisionEngine:
                 enforce_detection=False,
                 detector_backend='skip'
             )
-            if isinstance(analysis, list):
-                emotion = analysis[0]['dominant_emotion']
-            else:
-                emotion = analysis['dominant_emotion']
+            emotion = analysis[0]['dominant_emotion'] if isinstance(analysis, list) else analysis['dominant_emotion']
                 
             self.emotion_history.append(emotion)
-            if len(self.emotion_history) > 0:
+            with self.ai_lock:
                 self.current_emotion = max(set(self.emotion_history), key=self.emotion_history.count)
                 
             if self.current_emotion != self.previous_emotion:
@@ -248,120 +365,100 @@ class VisionEngine:
         finally:
             self.is_analyzing_emotion = False
 
-    def start(self, emotion_callback):
-        """Starts main camera acquisition and rendering loop with retry tolerance."""
-        print(f"[VISION] Opening Webcam (Trying indices {CAMERA_INDEX}, 1, 2, 0, 3, -1)...")
-        
-        self.camera = None
-        for i in [CAMERA_INDEX, 1, 2, 0, 3, -1]:
-            for backend in [cv2.CAP_DSHOW, cv2.CAP_MSMF, None]:
-                cam = cv2.VideoCapture(i, backend) if backend is not None else cv2.VideoCapture(i)
-                if cam.isOpened():
-                    cam.set(cv2.CAP_PROP_FRAME_WIDTH, CAMERA_RESOLUTION[0])
-                    cam.set(cv2.CAP_PROP_FRAME_HEIGHT, CAMERA_RESOLUTION[1])
-                    cam.set(cv2.CAP_PROP_FPS, TARGET_FPS)
-                    cam.set(cv2.CAP_PROP_BUFFERSIZE, 1)
-
-                    for attempt in range(10):
-                        success, frame = cam.read()
-                        if success and frame is not None:
-                            print(f"[VISION] Connected to camera index {i} on attempt {attempt+1}")
-                            self.camera = cam
-                            break
-                        time.sleep(0.1)
-                    if self.camera is not None:
-                        break
-                cam.release()
-            if self.camera is not None:
-                break
-
-        if self.camera is None or not self.camera.isOpened():
-            msg = "Error. Could not connect to camera. Please check your webcam."
-            print(f"[ERROR] {msg}")
-            self.current_emotion = "CAMERA FAILED"
-            
-            error_frame = np.zeros((CAMERA_RESOLUTION[1], CAMERA_RESOLUTION[0], 3), dtype=np.uint8)
-            error_frame[:] = (0, 0, 150)
-            cv2.putText(error_frame, "CAMERA DISCONNECTED", (50, 240), 
-                        cv2.FONT_HERSHEY_SIMPLEX, 1.2, (255, 255, 255), 3)
-            ret, buf = cv2.imencode('.jpg', error_frame)
-            if ret:
-                with self.lock:
-                    self.latest_jpeg_bytes = buf.tobytes()
-            self.audio.speak(msg)
-            return
-
-        self.running = True
-        self.audio.speak("Vision system online. Streaming to dashboard.")
-
-        consecutive_failures = 0
-
+    def _ai_loop(self, emotion_callback):
+        """Dedicated thread for YOLO and DeepFace processing. Will skip frames if slow."""
+        last_processed_frame = None
         while self.running:
-            success, frame = self.camera.read()
-            if not success or frame is None:
-                consecutive_failures += 1
-                if consecutive_failures > 15:
-                    msg = "Camera disconnected."
-                    print(f"[ERROR] {msg}")
-                    self.audio.speak(msg)
-                    break
+            frame = self.camera_manager.get_frame()
+            if frame is None or frame is last_processed_frame:
                 time.sleep(0.01)
                 continue
             
-            consecutive_failures = 0
-            self.frame_count += 1
-
-            # High-speed CUDA Object Tracking
-            try:
-                tracked = self.tracker.track(frame)
-            except Exception as e:
-                tracked = []
-
-            # Check if any person is detected
-            person_objs = [obj for obj in tracked if obj["cls"] == 0]
-
-            if person_objs:
-                # Trigger async DeepFace analysis on largest person crop
-                if not self.is_analyzing_emotion:
-                    best_person = max(
-                        person_objs, 
-                        key=lambda o: (o["box"][2] - o["box"][0]) * (o["box"][3] - o["box"][1])
-                    )
-                    x1, y1, x2, y2 = best_person["box"]
-                    h, w, _ = frame.shape
-                    
-                    # Isolate the Head/Face region (top 40% of person bounding box)
-                    box_h = max(1, y2 - y1)
-                    head_y2 = y1 + int(box_h * 0.40)
-                    
-                    face_crop = frame[max(0, y1):min(h, head_y2), max(0, x1):min(w, x2)]
-                    
-                    if face_crop.size > 0:
-                        self.is_analyzing_emotion = True
-                        threading.Thread(
-                            target=self._analyze_emotion_async,
-                            args=(face_crop.copy(), emotion_callback),
-                            daemon=True
-                        ).start()
-            else:
-                self.current_emotion = "No person detected"
-
-            # Draw HUD Overlays
-            annotated_frame = self.processor.draw_hud(frame, tracked, self.current_emotion)
+            last_processed_frame = frame
             
-            # Encode frame to JPEG safely inside lock with quality 85
-            ret, buf = cv2.imencode('.jpg', annotated_frame, [int(cv2.IMWRITE_JPEG_QUALITY), 85])
+            t0 = time.time()
+            try:
+                # 1. YOLO Detection & Tracking
+                tracked = self.ai_manager.process_frame(frame)
+                
+                # 2. Depth, Navigation, & Threat Detection (Synchronous)
+                self.navigation.process_frame(frame, tracked, now=t0)
+                
+            except Exception as e:
+                print(f"[VISION] AI Loop Error: {e}")
+                tracked = []
+            
+            with self.ai_lock:
+                self.latest_tracked = tracked
+                self.ai_time_ms = (time.time() - t0) * 1000
+
+            person_objs = [obj for obj in tracked if obj["cls"] == 0]
+            if person_objs and not self.is_analyzing_emotion:
+                best_person = max(person_objs, key=lambda o: (o["box"][2] - o["box"][0]) * (o["box"][3] - o["box"][1]))
+                x1, y1, x2, y2 = best_person["box"]
+                h, w, _ = frame.shape
+                head_y2 = y1 + int(max(1, y2 - y1) * 0.40)
+                face_crop = frame[max(0, y1):min(h, head_y2), max(0, x1):min(w, x2)]
+                
+                if face_crop.size > 0:
+                    self.is_analyzing_emotion = True
+                    threading.Thread(target=self._analyze_emotion_async, args=(face_crop.copy(), emotion_callback), daemon=True).start()
+            elif not person_objs:
+                with self.ai_lock:
+                    self.current_emotion = "No person detected"
+
+    def _render_loop(self):
+        """Dedicated thread to guarantee smooth 30FPS streaming regardless of AI lag."""
+        while self.running:
+            frame = self.camera_manager.get_frame()
+            if frame is None:
+                # Generate a fallback frame
+                frame = np.zeros((CAMERA_RESOLUTION[1], CAMERA_RESOLUTION[0], 3), dtype=np.uint8)
+                frame[:] = (0, 0, 150)
+                cv2.putText(frame, "WAITING FOR CAMERA...", (50, 240), cv2.FONT_HERSHEY_SIMPLEX, 1.2, (255, 255, 255), 3)
+            else:
+                with self.ai_lock:
+                    tracked = list(self.latest_tracked)
+                    emotion = self.current_emotion
+                
+                nav_status = self.navigation.get_status()
+                frame = self.processor.draw_hud(frame, tracked, emotion, nav_status)
+                
+                # Save diagnostics for API
+                self.diagnostics = {
+                    "cam_fps": self.camera_manager._update_fps() if len(self.camera_manager.fps_buffer) > 0 else 0,
+                    "cam_status": self.camera_manager.status,
+                    "backend": self.camera_manager.active_backend,
+                    "resolution": self.camera_manager.active_resolution,
+                    "ai_time": self.ai_time_ms,
+                    "det_count": len(tracked),
+                    "device": DEVICE.upper()
+                }
+
+            ret, buf = cv2.imencode('.jpg', frame, [int(cv2.IMWRITE_JPEG_QUALITY), 85])
             if ret:
                 with self.lock:
                     self.latest_jpeg_bytes = buf.tobytes()
                 self.frame_ready_event.set()
+            
+            # Lock render loop to 30 FPS max to save CPU
+            time.sleep(1.0 / TARGET_FPS)
 
-        self.camera.release()
+    def start(self, emotion_callback):
+        self.running = True
+        self.camera_manager.start()
+        self.scene_understanding.start(self)
+        
+        threading.Thread(target=self._ai_loop, args=(emotion_callback,), daemon=True).start()
+        threading.Thread(target=self._render_loop, daemon=True).start()
+        
+        self.audio.speak("Vision system online. Streaming to dashboard.")
 
     def get_frame(self):
-        """Returns latest JPEG bytes for Flask MJPEG stream in a 100% thread-safe manner."""
         with self.lock:
             return self.latest_jpeg_bytes
 
     def stop(self):
         self.running = False
+        self.camera_manager.stop()
+        self.navigation.stop()

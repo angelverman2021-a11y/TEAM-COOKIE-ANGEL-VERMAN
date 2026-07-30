@@ -14,8 +14,11 @@ vision = VisionEngine(audio_engine=audio)
 system_status = "Disconnected"
 guardian_info = {"name": "", "phone": ""}
 
+last_emotion_time = 0
 def on_emotion_changed(emotion):
-    global system_status
+    global system_status, last_emotion_time
+    now = time.time()
+    
     if emotion and emotion != "Scanning...":
         if emotion == "No person detected":
             sentence = "I do not see anyone in front of you."
@@ -24,14 +27,19 @@ def on_emotion_changed(emotion):
         else:
             sentence = f"The person in front of you seems {emotion}."
         
-        print(f"[NAVI AUDIO]: {sentence}")
-        audio.speak(sentence)
         system_status = f"Last detected: {emotion}"
+        
+        if now - last_emotion_time > 15.0:
+            last_emotion_time = now
+            print(f"[NAVI AUDIO]: {sentence}")
+            audio.speak(sentence, priority=4)
         
         # Automatic Guardian SOS Trigger (Example logic)
         if emotion == "Angry" and guardian_info["name"]:
             alert_msg = f"Warning. Aggression detected. Alerting {guardian_info['name']}."
-            audio.speak(alert_msg)
+            # High priority alert
+            if now - last_emotion_time > 15.0:
+                audio.speak(alert_msg, priority=1)
             print(f"[GUARDIAN SOS]: SMS sent to {guardian_info['phone']} - User may be in a hostile environment!")
 
 def generate_video_stream():
@@ -62,10 +70,25 @@ def video_feed():
 
 @app.route('/api/status', methods=['GET'])
 def get_status():
+    nav_status = vision.navigation.get_status() if hasattr(vision, 'navigation') else {}
+    diagnostics = vision.diagnostics if hasattr(vision, 'diagnostics') else {}
+    scene_data = vision.scene_understanding.get_structured_payload() if hasattr(vision, 'scene_understanding') else {}
     return jsonify({
         "emotion": vision.current_emotion,
         "status": system_status,
-        "guardian_set": bool(guardian_info["name"])
+        "guardian_set": bool(guardian_info["name"]),
+        "navigation_status": nav_status.get("navigation_status", "Unknown"),
+        "safe_direction": nav_status.get("safe_direction", "Unknown"),
+        "obstacle_count": nav_status.get("obstacle_count", 0),
+        "nearest_object": nav_status.get("nearest_obstacle", "None"),
+        "nearest_distance": nav_status.get("estimated_distance", 0.0),
+        "relative_speed": nav_status.get("relative_speed", 0.0),
+        "collision_risk": nav_status.get("collision_risk", "Low"),
+        "danger_level": nav_status.get("danger_level", "Safe"),
+        "recommended_action": nav_status.get("recommended_action", "Path clear"),
+        "diagnostics": diagnostics,
+        "nav_metrics": nav_status.get("nav_metrics", {}),
+        "scene_understanding": scene_data
     })
 
 @app.route('/api/guardian', methods=['POST'])

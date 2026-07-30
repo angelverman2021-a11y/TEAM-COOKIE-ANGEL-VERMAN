@@ -221,13 +221,13 @@
 <div class="absolute inset-0 p-lg pointer-events-none flex flex-col justify-between">
 <div class="flex justify-between items-start">
 <div class="flex flex-col gap-2">
-<div class="px-md py-sm glass-card border-primary/50 bg-primary/10 flex items-center gap-sm">
+<div id="hud-traffic" class="px-md py-sm glass-card border-primary/50 bg-primary/10 flex items-center gap-sm hidden">
 <span class="w-2 h-2 rounded-full bg-primary pulse"></span>
-<span class="text-label-sm font-label-sm text-primary uppercase">Traffic Light: Green</span>
+<span id="hud-traffic-text" class="text-label-sm font-label-sm text-primary uppercase">Traffic Light: Green</span>
 </div>
-<div class="px-md py-sm glass-card border-accent-cyan/50 bg-accent-cyan/10 flex items-center gap-sm">
+<div id="hud-person" class="px-md py-sm glass-card border-accent-cyan/50 bg-accent-cyan/10 flex items-center gap-sm hidden">
 <span class="material-symbols-outlined text-accent-cyan text-sm">person</span>
-<span class="text-label-sm font-label-sm text-accent-cyan uppercase">Person: 3m Ahead</span>
+<span id="hud-person-text" class="text-label-sm font-label-sm text-accent-cyan uppercase">Person: --m</span>
 </div>
 </div>
 <div class="glass-card p-md flex flex-col items-center gap-xs glow-emerald">
@@ -236,9 +236,9 @@
 </div>
 </div>
 <div class="flex justify-center">
-<div class="px-xl py-md glass-card bg-background/60 backdrop-blur-xl border-primary/30 flex items-center gap-md">
+<div id="hud-stairs" class="px-xl py-md glass-card bg-background/60 backdrop-blur-xl border-primary/30 flex items-center gap-md hidden">
 <span class="material-symbols-outlined text-primary pulse">stairs</span>
-<span class="text-title-md font-title-md text-primary">Stairs Detected (15m)</span>
+<span id="hud-stairs-text" class="text-title-md font-title-md text-primary">Stairs Detected (--m)</span>
 </div>
 </div>
 </div>
@@ -260,9 +260,9 @@
 <div class="w-1 bg-secondary rounded-full waveform-bar" style="animation-delay: 0.4s"></div>
 <div class="w-1 bg-secondary rounded-full waveform-bar" style="animation-delay: 0.6s"></div>
 </div>
-<p class="text-center text-body-md font-medium text-on-surface leading-relaxed">
-                    "Obstacle ahead. <br/>Move slightly <span class="text-secondary font-bold">right</span>."
-                </p>
+<p id="voice-assistant-text" class="text-center text-body-md font-medium text-on-surface leading-relaxed">
+    "Waiting for input..."
+</p>
 </div>
 </section>
 <section class="glass-card p-lg flex flex-col gap-md h-1/2">
@@ -287,8 +287,43 @@
 <div class="mt-auto p-md border-t border-border-glass text-center">
 <p class="text-xs text-on-surface-variant">Active monitoring: 12h 45m</p>
 </div>
-</section>
-</div>
+        </section>
+        
+        <!-- Scene Summary Panel -->
+        <section class="glass-card p-md flex flex-col gap-sm glow-emerald mb-4">
+            <div class="flex items-center gap-2 mb-1 border-b border-border-glass pb-2">
+                <span class="material-symbols-outlined text-primary">visibility</span>
+                <h3 class="text-label-md font-bold text-primary uppercase">Scene Understanding</h3>
+            </div>
+            <p class="text-xs font-bold text-on-surface">Scene: <span id="scene-short" class="font-normal text-on-surface-variant">--</span></p>
+            <p class="text-xs font-bold text-on-surface">Objects: <span id="scene-objects" class="font-normal text-on-surface-variant">--</span></p>
+            <p class="text-xs font-bold text-on-surface">Obstacles: <span id="scene-obstacles" class="font-normal text-on-surface-variant">--</span></p>
+            <p class="text-xs font-bold text-on-surface">Safe Dir: <span id="scene-dir" class="font-normal text-on-surface-variant">--</span></p>
+            <div class="mt-2 p-2 rounded-lg bg-surface-variant/30 text-xs text-on-surface-variant italic">
+                "<span id="scene-summary">Initializing Florence-2 Vision AI...</span>"
+            </div>
+        </section>
+
+        <!-- Collapsible Debug Panel -->
+        <details class="glass-card glow-emerald group">
+            <summary class="p-md flex items-center justify-between cursor-pointer list-none text-primary">
+                <div class="flex items-center gap-md">
+                    <span class="material-symbols-outlined">bug_report</span>
+                    <h3 class="text-title-md font-title-md">System Diagnostics</h3>
+                </div>
+                <span class="material-symbols-outlined transition-transform group-open:rotate-180">expand_more</span>
+            </summary>
+            <div class="p-md pt-0 border-t border-border-glass mt-2 flex flex-col gap-sm text-xs font-mono text-on-surface-variant">
+                <div class="flex justify-between"><span>Cam FPS:</span><span id="dbg-fps">--</span></div>
+                <div class="flex justify-between"><span>Backend:</span><span id="dbg-backend">--</span></div>
+                <div class="flex justify-between"><span>Resolution:</span><span id="dbg-resolution">--</span></div>
+                <div class="flex justify-between"><span>AI Time (ms):</span><span id="dbg-aitime">--</span></div>
+                <div class="flex justify-between"><span>Detections:</span><span id="dbg-detcount">--</span></div>
+                <div class="flex justify-between"><span>GPU Device:</span><span id="dbg-device">--</span></div>
+                <div class="flex justify-between"><span>Camera Status:</span><span id="dbg-camstatus">--</span></div>
+            </div>
+        </details>
+    </div>
 </main>
 <!-- Footer Stats -->
 <footer class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-20 md:mb-6">

@@ -77,6 +77,94 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             }
             
+            // Populate Debug Diagnostics
+            if(data.diagnostics) {
+                const diag = data.diagnostics;
+                const setHtml = (id, val) => {
+                    let el = document.getElementById(id);
+                    if(el) el.innerText = val;
+                };
+                setHtml("dbg-fps", (diag.cam_fps || 0).toFixed(1));
+                setHtml("dbg-backend", diag.backend || "--");
+                setHtml("dbg-resolution", diag.resolution ? diag.resolution.join("x") : "--");
+                setHtml("dbg-aitime", (diag.ai_time || 0).toFixed(1));
+                setHtml("dbg-detcount", diag.det_count || "0");
+                setHtml("dbg-device", diag.device || "--");
+                setHtml("dbg-camstatus", diag.cam_status || "--");
+            }
+            
+            // Dynamic HUD Widgets based on Live AI Data
+            const navMetrics = data.nav_metrics || {};
+            let foundPerson = null;
+            let foundStairs = null;
+            let foundTrafficLight = null;
+            
+            for (const key in navMetrics) {
+                const obj = navMetrics[key];
+                const lbl = (obj.label || "").toLowerCase();
+                if (lbl === "person") {
+                    if (!foundPerson || obj.dist < foundPerson.dist) foundPerson = obj;
+                } else if (lbl === "stairs") {
+                    if (!foundStairs || obj.dist < foundStairs.dist) foundStairs = obj;
+                } else if (lbl === "traffic light") {
+                    if (!foundTrafficLight || obj.dist < foundTrafficLight.dist) foundTrafficLight = obj;
+                }
+            }
+            
+            const elPerson = document.getElementById("hud-person");
+            const elPersonText = document.getElementById("hud-person-text");
+            if (foundPerson && elPerson && elPersonText) {
+                elPerson.classList.remove("hidden");
+                elPersonText.innerText = `PERSON: ${(foundPerson.dist * 10).toFixed(1)}m`; // Pseudo-distance scaling
+            } else if (elPerson) {
+                elPerson.classList.add("hidden");
+            }
+            
+            const elStairs = document.getElementById("hud-stairs");
+            const elStairsText = document.getElementById("hud-stairs-text");
+            if (foundStairs && elStairs && elStairsText) {
+                elStairs.classList.remove("hidden");
+                elStairsText.innerText = `Stairs Detected (${(foundStairs.dist * 10).toFixed(1)}m)`;
+            } else if (elStairs) {
+                elStairs.classList.add("hidden");
+            }
+            
+            const elTraffic = document.getElementById("hud-traffic");
+            const elTrafficText = document.getElementById("hud-traffic-text");
+            if (foundTrafficLight && elTraffic && elTrafficText) {
+                elTraffic.classList.remove("hidden");
+                elTrafficText.innerText = `Traffic Light: ${(foundTrafficLight.dist * 10).toFixed(1)}m`;
+            } else if (elTraffic) {
+                elTraffic.classList.add("hidden");
+            }
+            
+            // Voice Assistant Text
+            const elVoice = document.getElementById("voice-assistant-text");
+            if (elVoice) {
+                let action = data.recommended_action || "Path clear";
+                if (data.danger_level === "Critical") {
+                    elVoice.innerHTML = `"<span class='text-danger font-bold'>${action.toUpperCase()}</span>"`;
+                } else if (data.danger_level === "Warning") {
+                    elVoice.innerHTML = `"<span class='text-accent-cyan font-bold'>${action}</span>"`;
+                } else {
+                    elVoice.innerHTML = `"${action}"`;
+                }
+            }
+            
+            // Scene Understanding Text
+            if (data.scene_understanding) {
+                const sc = data.scene_understanding;
+                const setHtml = (id, val) => {
+                    let el = document.getElementById(id);
+                    if(el) el.innerText = val;
+                };
+                setHtml("scene-short", sc.scene || "--");
+                setHtml("scene-objects", sc.objects ? sc.objects.join(", ") : "--");
+                setHtml("scene-obstacles", sc.obstacles ? sc.obstacles.join(", ") : "--");
+                setHtml("scene-dir", sc.walkable_direction || "--");
+                setHtml("scene-summary", sc.summary || "Waiting for Florence-2...");
+            }
+            
         } catch (err) {
             console.error("Telemetry lost");
         }
