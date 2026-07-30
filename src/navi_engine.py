@@ -3,7 +3,6 @@ import numpy as np
 import threading
 import collections
 import warnings
-import queue
 import time
 import os
 import sys
@@ -32,12 +31,16 @@ class ObjectDetector:
         print(f"[VISION-DETECTOR] Loading model '{model_path}' on device '{self.device}'...")
         from ultralytics import YOLO
         self.model = YOLO(model_path)
-        # Move model to specified device
+        
         try:
             self.model.to(self.device)
             print(f"[VISION-DETECTOR] Model successfully assigned to {self.device.upper()}")
+            # Warm up CUDA memory allocation
+            dummy = np.zeros((480, 640, 3), dtype=np.uint8)
+            self.model(dummy, conf=self.conf_thresh, verbose=False)
+            print(f"[VISION-DETECTOR] CUDA warm-up complete!")
         except Exception as e:
-            print(f"[VISION-DETECTOR] Warning setting device: {e}. Falling back to CPU.")
+            print(f"[VISION-DETECTOR] Device warning: {e}. Falling back to CPU.")
             self.device = "cpu"
             self.model.to("cpu")
 
@@ -54,7 +57,7 @@ class ObjectDetector:
 
 
 class ObjectTracker:
-    """Class 2: ObjectTracker - Wraps ByteTrack for persistent ID tracking across frames."""
+    """Class 2: ObjectTracker - Persistent object tracking across frames."""
     def __init__(self, detector: ObjectDetector):
         self.detector = detector
 
@@ -74,11 +77,9 @@ class ObjectTracker:
         if results and len(results) > 0 and results[0].boxes is not None:
             boxes = results[0].boxes
             for box in boxes:
-                # Extract coordinates, confidence, class ID, and track ID
                 xyxy = box.xyxy[0].cpu().numpy()
                 conf = float(box.conf[0].cpu().numpy())
                 cls_id = int(box.cls[0].cpu().numpy())
-                
                 track_id = int(box.id[0].cpu().numpy()) if box.id is not None else None
                 
                 tracked_objects.append({
@@ -93,7 +94,7 @@ class ObjectTracker:
 
 
 class FrameProcessor:
-    """Class 3: FrameProcessor - Handles HUD overlays, bounding box drawing, FPS counter, and crops."""
+    """Class 3: FrameProcessor - Handles HUD overlays, bounding box drawing, and FPS counter."""
     def __init__(self):
         self.fps_buffer = collections.deque(maxlen=30)
         self.last_time = time.time()
@@ -148,7 +149,7 @@ class FrameProcessor:
 
 
 class VisionEngine:
-    """Class 4: VisionEngine - Main Orchestrator providing high-FPS decoupled processing and Flask integration."""
+    """Class 4: VisionEngine - Main Orchestrator providing live high-FPS streaming and Flask integration."""
     def __init__(self, audio_engine):
         self.audio = audio_engine
         self.current_emotion = "Scanning..."
@@ -165,11 +166,6 @@ class VisionEngine:
         self.tracker = ObjectTracker(self.detector)
         self.processor = FrameProcessor()
 
-        # Threading & Decoupled Inference Buffers
-        self.inference_queue = queue.Queue(maxsize=1)
-        self.latest_tracked_objects = []
-        self.lock = threading.Lock()
-
         # DeepFace Warmup
         print("[VISION] Warming up DeepFace Engine...")
         try:
@@ -179,72 +175,33 @@ class VisionEngine:
         except Exception as e:
             print(f"[VISION] DeepFace warmup notice: {e}")
 
-    def _ai_inference_worker(self, emotion_callback):
-        """Worker Thread: Handles YOLO11 + ByteTrack and DeepFace inference continuously in background."""
+    def _analyze_emotion_async(self, person_crop, emotion_callback):
+        """Asynchronous background worker for DeepFace emotion classification."""
         from deepface import DeepFace
-        
-        while self.running:
-            try:
-                frame = self.inference_queue.get(timeout=0.2)
-            except queue.Empty:
-                continue
-
-            # Run Object Tracking
-            try:
-                tracked = self.tracker.track(frame)
-                with self.lock:
-                    self.latest_tracked_objects = tracked
+        try:
+            analysis = DeepFace.analyze(
+                person_crop,
+                actions=['emotion'],
+                enforce_detection=False,
+                detector_backend='skip'
+            )
+            if isinstance(analysis, list):
+                emotion = analysis[0]['dominant_emotion']
+            else:
+                emotion = analysis['dominant_emotion']
                 
-                person_objs = [obj for obj in tracked if obj["cls"] == 0]
-
-                if person_objs:
-                    # Run DeepFace emotion analysis on the cropped person region whenever available
-                    if not self.is_analyzing_emotion:
-                        # Select the largest person box by area
-                        best_person = max(
-                            person_objs, 
-                            key=lambda o: (o["box"][2] - o["box"][0]) * (o["box"][3] - o["box"][1])
-                        )
-                        x1, y1, x2, y2 = best_person["box"]
-                        h, w, _ = frame.shape
-                        person_crop = frame[max(0, y1):min(h, y2), max(0, x1):min(w, x2)]
-                        
-                        if person_crop.size > 0:
-                            self.is_analyzing_emotion = True
-                            
-                            def analyze_bg(crop_img):
-                                try:
-                                    analysis = DeepFace.analyze(
-                                        crop_img,
-                                        actions=['emotion'],
-                                        enforce_detection=False,
-                                        detector_backend='skip'
-                                    )
-                                    if isinstance(analysis, list):
-                                        emotion = analysis[0]['dominant_emotion']
-                                    else:
-                                        emotion = analysis['dominant_emotion']
-                                        
-                                    self.emotion_history.append(emotion)
-                                    if len(self.emotion_history) > 0:
-                                        self.current_emotion = max(set(self.emotion_history), key=self.emotion_history.count)
-                                except Exception as e:
-                                    pass
-                                finally:
-                                    self.is_analyzing_emotion = False
-
-                            threading.Thread(target=analyze_bg, args=(person_crop.copy(),), daemon=True).start()
-                else:
-                    self.current_emotion = "No person detected"
-
-                # Emotion Callback Trigger
-                if self.current_emotion != self.previous_emotion:
-                    if emotion_callback:
-                        emotion_callback(self.current_emotion)
-                    self.previous_emotion = self.current_emotion
-
-            except Exception as e:
-                print(f"[VISION-WORKER ERROR] {e}")
+            self.emotion_history.append(emotion)
+            if len(self.emotion_history) > 0:
+                self.current_emotion = max(set(self.emotion_history), key=self.emotion_history.count)
+                
+            if self.current_emotion != self.previous_emotion:
+                if emotion_callback:
+                    emotion_callback(self.current_emotion)
+                self.previous_emotion = self.current_emotion
+        except Exception:
+            pass
+        finally:
+            self.is_analyzing_emotion = False
 
     def start(self, emotion_callback):
         """Starts main camera acquisition and rendering loop."""
@@ -255,7 +212,6 @@ class VisionEngine:
             for backend in [cv2.CAP_DSHOW, None]:
                 cam = cv2.VideoCapture(i, backend) if backend is not None else cv2.VideoCapture(i)
                 if cam.isOpened():
-                    # Set resolution & FPS target
                     cam.set(cv2.CAP_PROP_FRAME_WIDTH, CAMERA_RESOLUTION[0])
                     cam.set(cv2.CAP_PROP_FRAME_HEIGHT, CAMERA_RESOLUTION[1])
                     cam.set(cv2.CAP_PROP_FPS, TARGET_FPS)
@@ -289,10 +245,6 @@ class VisionEngine:
         self.running = True
         self.audio.speak("Vision system online. Streaming to dashboard.")
 
-        # Start AI Background Worker Thread
-        worker_thread = threading.Thread(target=self._ai_inference_worker, args=(emotion_callback,), daemon=True)
-        worker_thread.start()
-
         target_dt = 1.0 / TARGET_FPS
 
         while self.running:
@@ -306,19 +258,41 @@ class VisionEngine:
 
             self.frame_count += 1
 
-            # Non-blocking push to AI inference queue
-            if not self.inference_queue.full():
-                self.inference_queue.put(frame)
+            # High-speed CUDA Object Tracking
+            try:
+                tracked = self.tracker.track(frame)
+            except Exception as e:
+                tracked = []
 
-            # Get latest tracked objects safely
-            with self.lock:
-                tracked = list(self.latest_tracked_objects)
+            # Check if any person is detected
+            person_objs = [obj for obj in tracked if obj["cls"] == 0]
 
-            # Render HUD overlays instantly on current frame (High FPS)
+            if person_objs:
+                # Trigger async DeepFace analysis on largest person crop
+                if not self.is_analyzing_emotion:
+                    best_person = max(
+                        person_objs, 
+                        key=lambda o: (o["box"][2] - o["box"][0]) * (o["box"][3] - o["box"][1])
+                    )
+                    x1, y1, x2, y2 = best_person["box"]
+                    h, w, _ = frame.shape
+                    person_crop = frame[max(0, y1):min(h, y2), max(0, x1):min(w, x2)]
+                    
+                    if person_crop.size > 0:
+                        self.is_analyzing_emotion = True
+                        threading.Thread(
+                            target=self._analyze_emotion_async,
+                            args=(person_crop.copy(), emotion_callback),
+                            daemon=True
+                        ).start()
+            else:
+                self.current_emotion = "No person detected"
+
+            # Draw HUD Overlays
             annotated_frame = self.processor.draw_hud(frame, tracked, self.current_emotion)
             self.latest_frame = annotated_frame
 
-            # Control loop speed for target FPS
+            # Target FPS sleep
             elapsed = time.time() - t0
             sleep_time = target_dt - elapsed
             if sleep_time > 0:
