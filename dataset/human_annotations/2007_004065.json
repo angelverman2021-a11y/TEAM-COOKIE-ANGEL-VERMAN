@@ -1,0 +1,48 @@
+{
+    "width": 500,
+    "height": 375,
+    "objects": [
+        {
+            "label": "bus",
+            "box": [
+                26,
+                85,
+                426,
+                298
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "person",
+            "box": [
+                452,
+                188,
+                475,
+                245
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "person",
+            "box": [
+                5,
+                193,
+                26,
+                241
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "person",
+            "box": [
+                341,
+                167,
+                367,
+                201
+            ],
+            "hazard_level": "Unknown"
+        }
+    ],
+    "scene_status": "Unknown",
+    "navigation_context": "Unknown"
+}

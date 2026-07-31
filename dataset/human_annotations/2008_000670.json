@@ -1,0 +1,28 @@
+{
+    "width": 384,
+    "height": 256,
+    "objects": [
+        {
+            "label": "cat",
+            "box": [
+                67,
+                76,
+                271,
+                168
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "sofa",
+            "box": [
+                1,
+                1,
+                384,
+                256
+            ],
+            "hazard_level": "Unknown"
+        }
+    ],
+    "scene_status": "Unknown",
+    "navigation_context": "Unknown"
+}

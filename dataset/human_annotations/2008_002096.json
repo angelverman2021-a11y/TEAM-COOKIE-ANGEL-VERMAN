@@ -1,0 +1,48 @@
+{
+    "width": 500,
+    "height": 375,
+    "objects": [
+        {
+            "label": "dog",
+            "box": [
+                1,
+                251,
+                113,
+                375
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "person",
+            "box": [
+                200,
+                138,
+                274,
+                334
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "person",
+            "box": [
+                392,
+                74,
+                482,
+                335
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "person",
+            "box": [
+                322,
+                38,
+                413,
+                321
+            ],
+            "hazard_level": "Unknown"
+        }
+    ],
+    "scene_status": "Unknown",
+    "navigation_context": "Unknown"
+}

@@ -1,0 +1,48 @@
+{
+    "width": 500,
+    "height": 375,
+    "objects": [
+        {
+            "label": "car",
+            "box": [
+                398,
+                238,
+                440,
+                276
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "car",
+            "box": [
+                313,
+                241,
+                354,
+                273
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "chair",
+            "box": [
+                68,
+                261,
+                113,
+                334
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "bicycle",
+            "box": [
+                214,
+                250,
+                245,
+                288
+            ],
+            "hazard_level": "Unknown"
+        }
+    ],
+    "scene_status": "Unknown",
+    "navigation_context": "Unknown"
+}

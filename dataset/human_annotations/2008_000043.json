@@ -1,0 +1,88 @@
+{
+    "width": 500,
+    "height": 374,
+    "objects": [
+        {
+            "label": "diningtable",
+            "box": [
+                166,
+                175,
+                425,
+                344
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "chair",
+            "box": [
+                244,
+                156,
+                316,
+                287
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "chair",
+            "box": [
+                328,
+                162,
+                388,
+                194
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "chair",
+            "box": [
+                355,
+                180,
+                440,
+                328
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "chair",
+            "box": [
+                289,
+                197,
+                373,
+                336
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "chair",
+            "box": [
+                164,
+                195,
+                264,
+                342
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "chair",
+            "box": [
+                150,
+                161,
+                186,
+                282
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "pottedplant",
+            "box": [
+                436,
+                301,
+                500,
+                374
+            ],
+            "hazard_level": "Unknown"
+        }
+    ],
+    "scene_status": "Unknown",
+    "navigation_context": "Unknown"
+}

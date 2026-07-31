@@ -1,0 +1,198 @@
+{
+    "width": 500,
+    "height": 500,
+    "objects": [
+        {
+            "label": "sheep",
+            "box": [
+                1,
+                270,
+                82,
+                329
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "sheep",
+            "box": [
+                236,
+                275,
+                294,
+                326
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "sheep",
+            "box": [
+                180,
+                275,
+                235,
+                365
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "sheep",
+            "box": [
+                132,
+                261,
+                167,
+                287
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "sheep",
+            "box": [
+                104,
+                252,
+                116,
+                269
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "sheep",
+            "box": [
+                56,
+                254,
+                82,
+                275
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "sheep",
+            "box": [
+                23,
+                263,
+                42,
+                274
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "sheep",
+            "box": [
+                8,
+                254,
+                25,
+                271
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "sheep",
+            "box": [
+                30,
+                256,
+                45,
+                269
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "sheep",
+            "box": [
+                203,
+                256,
+                215,
+                267
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "sheep",
+            "box": [
+                165,
+                260,
+                183,
+                281
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "sheep",
+            "box": [
+                217,
+                259,
+                231,
+                266
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "sheep",
+            "box": [
+                255,
+                264,
+                270,
+                278
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "sheep",
+            "box": [
+                270,
+                266,
+                287,
+                276
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "sheep",
+            "box": [
+                361,
+                264,
+                376,
+                276
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "sheep",
+            "box": [
+                338,
+                262,
+                351,
+                272
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "sheep",
+            "box": [
+                324,
+                262,
+                342,
+                274
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "sheep",
+            "box": [
+                312,
+                260,
+                323,
+                274
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "sheep",
+            "box": [
+                297,
+                259,
+                312,
+                274
+            ],
+            "hazard_level": "Unknown"
+        }
+    ],
+    "scene_status": "Unknown",
+    "navigation_context": "Unknown"
+}

@@ -1,0 +1,88 @@
+{
+    "width": 449,
+    "height": 420,
+    "objects": [
+        {
+            "label": "diningtable",
+            "box": [
+                19,
+                225,
+                369,
+                420
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "person",
+            "box": [
+                331,
+                145,
+                443,
+                407
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "person",
+            "box": [
+                38,
+                135,
+                143,
+                330
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "person",
+            "box": [
+                107,
+                139,
+                161,
+                242
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "person",
+            "box": [
+                278,
+                139,
+                363,
+                284
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "person",
+            "box": [
+                257,
+                172,
+                303,
+                236
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "chair",
+            "box": [
+                368,
+                303,
+                449,
+                420
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "chair",
+            "box": [
+                19,
+                255,
+                88,
+                391
+            ],
+            "hazard_level": "Unknown"
+        }
+    ],
+    "scene_status": "Unknown",
+    "navigation_context": "Unknown"
+}

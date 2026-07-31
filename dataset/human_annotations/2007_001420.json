@@ -1,0 +1,38 @@
+{
+    "width": 500,
+    "height": 332,
+    "objects": [
+        {
+            "label": "horse",
+            "box": [
+                192,
+                109,
+                340,
+                270
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "person",
+            "box": [
+                281,
+                80,
+                364,
+                268
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "pottedplant",
+            "box": [
+                436,
+                148,
+                500,
+                306
+            ],
+            "hazard_level": "Unknown"
+        }
+    ],
+    "scene_status": "Unknown",
+    "navigation_context": "Unknown"
+}

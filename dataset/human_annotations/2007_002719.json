@@ -1,0 +1,58 @@
+{
+    "width": 500,
+    "height": 374,
+    "objects": [
+        {
+            "label": "boat",
+            "box": [
+                53,
+                100,
+                468,
+                238
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "person",
+            "box": [
+                158,
+                130,
+                188,
+                168
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "person",
+            "box": [
+                183,
+                108,
+                206,
+                136
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "person",
+            "box": [
+                144,
+                107,
+                167,
+                132
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "person",
+            "box": [
+                87,
+                126,
+                122,
+                150
+            ],
+            "hazard_level": "Unknown"
+        }
+    ],
+    "scene_status": "Unknown",
+    "navigation_context": "Unknown"
+}

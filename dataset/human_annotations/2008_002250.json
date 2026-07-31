@@ -1,0 +1,88 @@
+{
+    "width": 500,
+    "height": 375,
+    "objects": [
+        {
+            "label": "boat",
+            "box": [
+                17,
+                23,
+                108,
+                66
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "boat",
+            "box": [
+                340,
+                55,
+                417,
+                100
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "boat",
+            "box": [
+                464,
+                36,
+                500,
+                68
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "person",
+            "box": [
+                442,
+                31,
+                467,
+                78
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "person",
+            "box": [
+                299,
+                51,
+                323,
+                107
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "bottle",
+            "box": [
+                473,
+                117,
+                481,
+                137
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "person",
+            "box": [
+                253,
+                48,
+                278,
+                74
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "boat",
+            "box": [
+                1,
+                85,
+                500,
+                375
+            ],
+            "hazard_level": "Unknown"
+        }
+    ],
+    "scene_status": "Unknown",
+    "navigation_context": "Unknown"
+}

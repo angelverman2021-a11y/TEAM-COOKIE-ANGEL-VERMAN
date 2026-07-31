@@ -1,0 +1,98 @@
+{
+    "width": 500,
+    "height": 375,
+    "objects": [
+        {
+            "label": "cow",
+            "box": [
+                1,
+                107,
+                37,
+                238
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "cow",
+            "box": [
+                110,
+                97,
+                264,
+                194
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "cow",
+            "box": [
+                250,
+                94,
+                359,
+                183
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "cow",
+            "box": [
+                383,
+                96,
+                423,
+                175
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "cow",
+            "box": [
+                464,
+                75,
+                500,
+                132
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "car",
+            "box": [
+                100,
+                63,
+                140,
+                94
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "car",
+            "box": [
+                329,
+                55,
+                374,
+                91
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "car",
+            "box": [
+                404,
+                64,
+                438,
+                84
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "car",
+            "box": [
+                440,
+                69,
+                485,
+                83
+            ],
+            "hazard_level": "Unknown"
+        }
+    ],
+    "scene_status": "Unknown",
+    "navigation_context": "Unknown"
+}

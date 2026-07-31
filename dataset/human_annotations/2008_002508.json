@@ -1,0 +1,138 @@
+{
+    "width": 500,
+    "height": 333,
+    "objects": [
+        {
+            "label": "diningtable",
+            "box": [
+                299,
+                156,
+                500,
+                312
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "chair",
+            "box": [
+                297,
+                151,
+                355,
+                246
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "chair",
+            "box": [
+                318,
+                162,
+                380,
+                268
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "chair",
+            "box": [
+                349,
+                170,
+                422,
+                297
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "chair",
+            "box": [
+                416,
+                172,
+                499,
+                290
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "chair",
+            "box": [
+                390,
+                152,
+                415,
+                172
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "chair",
+            "box": [
+                276,
+                144,
+                318,
+                211
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "chair",
+            "box": [
+                136,
+                161,
+                185,
+                217
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "chair",
+            "box": [
+                136,
+                131,
+                175,
+                157
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "sofa",
+            "box": [
+                193,
+                139,
+                270,
+                199
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "sofa",
+            "box": [
+                26,
+                134,
+                102,
+                204
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "chair",
+            "box": [
+                54,
+                189,
+                157,
+                308
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "chair",
+            "box": [
+                396,
+                162,
+                451,
+                269
+            ],
+            "hazard_level": "Unknown"
+        }
+    ],
+    "scene_status": "Unknown",
+    "navigation_context": "Unknown"
+}

@@ -1,0 +1,48 @@
+{
+    "width": 375,
+    "height": 500,
+    "objects": [
+        {
+            "label": "chair",
+            "box": [
+                168,
+                189,
+                266,
+                355
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "chair",
+            "box": [
+                280,
+                222,
+                367,
+                385
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "pottedplant",
+            "box": [
+                288,
+                232,
+                306,
+                259
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "chair",
+            "box": [
+                2,
+                418,
+                98,
+                500
+            ],
+            "hazard_level": "Unknown"
+        }
+    ],
+    "scene_status": "Unknown",
+    "navigation_context": "Unknown"
+}

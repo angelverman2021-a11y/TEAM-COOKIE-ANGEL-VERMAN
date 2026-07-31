@@ -1,52 +1,67 @@
-import sys
-import os
-import cv2
+import pytest
+import time
 import numpy as np
+from src.navigation_engine import NavigationEngine
+from src.vision.interfaces import PerceptionResult
 
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-from src.navigation_engine import NavigationEngine, NavigationManager
-from src.audio_engine import AudioEngine
+class MockAudioEngine:
+    def __init__(self):
+        self.logs = []
+    
+    def speak(self, msg, priority):
+        self.logs.append((priority, msg))
 
-print("="*60)
-print("       TESTING NAVIGATION ENGINE")
-print("="*60)
+def test_navigation_empty_perception():
+    audio = MockAudioEngine()
+    engine = NavigationEngine(audio)
+    
+    # Test empty perception
+    perception = PerceptionResult()
+    engine.process_perception(perception)
+    
+    status = engine.get_status()
+    assert status["navigation_status"] == "Degraded (No Depth Map)"
+    
+def test_navigation_with_objects():
+    audio = MockAudioEngine()
+    engine = NavigationEngine(audio)
+    
+    depth_map = np.full((480, 640), 0.5, dtype=np.float32)
+    
+    objects = [
+        {"box": [100, 100, 200, 200], "track_id": 1, "label": "person"}
+    ]
+    
+    perception = PerceptionResult(
+        objects=objects,
+        depth_map=depth_map,
+        timestamp=time.time()
+    )
+    
+    engine.process_perception(perception)
+    status = engine.get_status()
+    
+    assert status["navigation_status"] == "Active"
+    assert status["nearest_obstacle"] == "person"
+    assert status["obstacle_count"] == 0 # 0.5 is not > WARNING_DISTANCE (0.5)
 
-try:
-    print("[TEST 1] Initializing NavigationEngine (MiDaS)...")
-    engine = NavigationEngine()
-    if not engine.active:
-        raise RuntimeError("NavigationEngine failed to initialize.")
-        
-    print("[TEST 2] Running Depth Inference...")
-    dummy_frame = np.zeros((480, 640, 3), dtype=np.uint8)
-    depth_map = engine.get_depth(dummy_frame)
-    print(f"-> Depth map generated: shape={depth_map.shape}, max={depth_map.max():.2f}")
+def test_navigation_critical_threat():
+    audio = MockAudioEngine()
+    engine = NavigationEngine(audio)
     
-    print("\n[TEST 3] NavigationManager integration...")
-    # Mocking VisionEngine
-    class MockVision:
-        def __init__(self):
-            class MockCameraManager:
-                def get_frame(self):
-                    return dummy_frame
-            self.camera_manager = MockCameraManager()
-            import threading
-            self.ai_lock = threading.Lock()
-            self.latest_tracked = [{"box": [100, 100, 300, 300], "conf": 0.9, "cls": 0, "track_id": 1, "label": "person"}]
-
-    audio = AudioEngine()
-    vision = MockVision()
-    nav_mgr = NavigationManager(audio, vision)
-    nav_mgr.start()
+    # Frame 1
+    depth_map1 = np.full((480, 640), 0.2, dtype=np.float32)
+    objects1 = [{"box": [100, 100, 200, 200], "track_id": 1, "label": "car"}]
+    p1 = PerceptionResult(objects=objects1, depth_map=depth_map1, timestamp=time.time())
+    engine.process_perception(p1)
     
-    import time
-    time.sleep(2.0) # Let it run a few loops
+    # Frame 2: Object rapidly approaches to depth 0.9 (Critical!)
+    depth_map2 = np.full((480, 640), 0.9, dtype=np.float32)
+    objects2 = [{"box": [50, 50, 250, 250], "track_id": 1, "label": "car"}]
+    p2 = PerceptionResult(objects=objects2, depth_map=depth_map2, timestamp=time.time() + 0.1)
+    engine.process_perception(p2)
     
-    status = nav_mgr.get_status()
-    print(f"-> Status: {status}")
-    nav_mgr.stop()
-    
-    print("\nALL NAVIGATION TESTS PASSED!")
-except Exception as e:
-    print(f"[ERROR] {e}")
-    sys.exit(1)
+    status = engine.get_status()
+    assert status["danger_level"] == "Critical"
+    assert status["collision_risk"] == "High"
+    assert status["recommended_action"] == "Stop immediately"

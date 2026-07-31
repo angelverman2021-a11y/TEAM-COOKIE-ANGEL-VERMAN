@@ -1,0 +1,98 @@
+{
+    "width": 500,
+    "height": 374,
+    "objects": [
+        {
+            "label": "person",
+            "box": [
+                91,
+                184,
+                239,
+                374
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "person",
+            "box": [
+                288,
+                189,
+                436,
+                374
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "person",
+            "box": [
+                374,
+                66,
+                500,
+                209
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "person",
+            "box": [
+                294,
+                16,
+                458,
+                134
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "person",
+            "box": [
+                279,
+                99,
+                444,
+                361
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "person",
+            "box": [
+                180,
+                96,
+                292,
+                353
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "person",
+            "box": [
+                88,
+                110,
+                210,
+                338
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "person",
+            "box": [
+                4,
+                82,
+                213,
+                344
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "sofa",
+            "box": [
+                1,
+                109,
+                480,
+                326
+            ],
+            "hazard_level": "Unknown"
+        }
+    ],
+    "scene_status": "Unknown",
+    "navigation_context": "Unknown"
+}

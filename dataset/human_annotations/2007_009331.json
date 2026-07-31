@@ -1,0 +1,58 @@
+{
+    "width": 500,
+    "height": 375,
+    "objects": [
+        {
+            "label": "horse",
+            "box": [
+                1,
+                1,
+                58,
+                193
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "person",
+            "box": [
+                57,
+                22,
+                125,
+                256
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "dog",
+            "box": [
+                100,
+                168,
+                217,
+                293
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "dog",
+            "box": [
+                260,
+                195,
+                360,
+                266
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "dog",
+            "box": [
+                331,
+                196,
+                412,
+                281
+            ],
+            "hazard_level": "Unknown"
+        }
+    ],
+    "scene_status": "Unknown",
+    "navigation_context": "Unknown"
+}

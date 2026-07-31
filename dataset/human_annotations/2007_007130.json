@@ -1,0 +1,38 @@
+{
+    "width": 500,
+    "height": 375,
+    "objects": [
+        {
+            "label": "tvmonitor",
+            "box": [
+                106,
+                96,
+                192,
+                188
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "tvmonitor",
+            "box": [
+                221,
+                80,
+                295,
+                157
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "pottedplant",
+            "box": [
+                355,
+                109,
+                475,
+                171
+            ],
+            "hazard_level": "Unknown"
+        }
+    ],
+    "scene_status": "Unknown",
+    "navigation_context": "Unknown"
+}

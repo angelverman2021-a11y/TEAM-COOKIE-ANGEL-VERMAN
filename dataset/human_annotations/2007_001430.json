@@ -1,0 +1,78 @@
+{
+    "width": 500,
+    "height": 375,
+    "objects": [
+        {
+            "label": "diningtable",
+            "box": [
+                1,
+                269,
+                250,
+                374
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "person",
+            "box": [
+                100,
+                154,
+                235,
+                286
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "person",
+            "box": [
+                211,
+                146,
+                303,
+                352
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "person",
+            "box": [
+                245,
+                154,
+                398,
+                374
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "pottedplant",
+            "box": [
+                56,
+                174,
+                100,
+                220
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "tvmonitor",
+            "box": [
+                316,
+                1,
+                418,
+                66
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "pottedplant",
+            "box": [
+                344,
+                83,
+                428,
+                214
+            ],
+            "hazard_level": "Unknown"
+        }
+    ],
+    "scene_status": "Unknown",
+    "navigation_context": "Unknown"
+}

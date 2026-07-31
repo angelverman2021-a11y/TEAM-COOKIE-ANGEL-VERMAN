@@ -1,0 +1,48 @@
+{
+    "width": 500,
+    "height": 500,
+    "objects": [
+        {
+            "label": "cat",
+            "box": [
+                38,
+                67,
+                443,
+                466
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "pottedplant",
+            "box": [
+                55,
+                75,
+                221,
+                256
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "pottedplant",
+            "box": [
+                380,
+                94,
+                496,
+                270
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "pottedplant",
+            "box": [
+                432,
+                54,
+                500,
+                289
+            ],
+            "hazard_level": "Unknown"
+        }
+    ],
+    "scene_status": "Unknown",
+    "navigation_context": "Unknown"
+}

@@ -1,0 +1,188 @@
+{
+    "width": 375,
+    "height": 500,
+    "objects": [
+        {
+            "label": "dog",
+            "box": [
+                222,
+                209,
+                294,
+                380
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "person",
+            "box": [
+                175,
+                29,
+                285,
+                288
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "pottedplant",
+            "box": [
+                1,
+                373,
+                112,
+                500
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "pottedplant",
+            "box": [
+                293,
+                267,
+                345,
+                319
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "pottedplant",
+            "box": [
+                345,
+                249,
+                375,
+                307
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "pottedplant",
+            "box": [
+                72,
+                285,
+                134,
+                334
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "pottedplant",
+            "box": [
+                93,
+                246,
+                140,
+                297
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "pottedplant",
+            "box": [
+                111,
+                186,
+                157,
+                259
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "pottedplant",
+            "box": [
+                135,
+                158,
+                173,
+                189
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "pottedplant",
+            "box": [
+                135,
+                116,
+                179,
+                162
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "pottedplant",
+            "box": [
+                144,
+                82,
+                179,
+                124
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "pottedplant",
+            "box": [
+                267,
+                162,
+                306,
+                210
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "pottedplant",
+            "box": [
+                1,
+                421,
+                60,
+                500
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "pottedplant",
+            "box": [
+                282,
+                134,
+                304,
+                170
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "pottedplant",
+            "box": [
+                152,
+                1,
+                215,
+                92
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "pottedplant",
+            "box": [
+                107,
+                37,
+                141,
+                90
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "pottedplant",
+            "box": [
+                288,
+                175,
+                357,
+                325
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "dog",
+            "box": [
+                62,
+                167,
+                220,
+                423
+            ],
+            "hazard_level": "Unknown"
+        }
+    ],
+    "scene_status": "Unknown",
+    "navigation_context": "Unknown"
+}

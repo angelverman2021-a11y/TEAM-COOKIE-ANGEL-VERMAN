@@ -1,0 +1,78 @@
+{
+    "width": 500,
+    "height": 333,
+    "objects": [
+        {
+            "label": "dog",
+            "box": [
+                181,
+                134,
+                375,
+                284
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "bottle",
+            "box": [
+                382,
+                54,
+                411,
+                101
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "bottle",
+            "box": [
+                402,
+                39,
+                426,
+                86
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "bottle",
+            "box": [
+                368,
+                38,
+                397,
+                84
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "bottle",
+            "box": [
+                303,
+                49,
+                351,
+                77
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "bottle",
+            "box": [
+                357,
+                22,
+                386,
+                65
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "bottle",
+            "box": [
+                385,
+                25,
+                411,
+                56
+            ],
+            "hazard_level": "Unknown"
+        }
+    ],
+    "scene_status": "Unknown",
+    "navigation_context": "Unknown"
+}

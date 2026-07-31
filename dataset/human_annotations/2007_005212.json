@@ -1,0 +1,38 @@
+{
+    "width": 500,
+    "height": 333,
+    "objects": [
+        {
+            "label": "motorbike",
+            "box": [
+                355,
+                203,
+                432,
+                267
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "chair",
+            "box": [
+                432,
+                213,
+                466,
+                291
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "sofa",
+            "box": [
+                431,
+                239,
+                500,
+                333
+            ],
+            "hazard_level": "Unknown"
+        }
+    ],
+    "scene_status": "Unknown",
+    "navigation_context": "Unknown"
+}

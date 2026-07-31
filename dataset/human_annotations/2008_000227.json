@@ -1,0 +1,38 @@
+{
+    "width": 500,
+    "height": 375,
+    "objects": [
+        {
+            "label": "cat",
+            "box": [
+                120,
+                152,
+                424,
+                346
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "chair",
+            "box": [
+                194,
+                1,
+                384,
+                121
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "diningtable",
+            "box": [
+                1,
+                90,
+                468,
+                375
+            ],
+            "hazard_level": "Unknown"
+        }
+    ],
+    "scene_status": "Unknown",
+    "navigation_context": "Unknown"
+}

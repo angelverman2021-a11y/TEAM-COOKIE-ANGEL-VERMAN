@@ -1,0 +1,58 @@
+{
+    "width": 191,
+    "height": 500,
+    "objects": [
+        {
+            "label": "person",
+            "box": [
+                69,
+                56,
+                191,
+                500
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "person",
+            "box": [
+                2,
+                94,
+                81,
+                303
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "person",
+            "box": [
+                33,
+                73,
+                84,
+                187
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "person",
+            "box": [
+                1,
+                75,
+                21,
+                197
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "bicycle",
+            "box": [
+                1,
+                184,
+                83,
+                324
+            ],
+            "hazard_level": "Unknown"
+        }
+    ],
+    "scene_status": "Unknown",
+    "navigation_context": "Unknown"
+}

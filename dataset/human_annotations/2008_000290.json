@@ -1,0 +1,38 @@
+{
+    "width": 500,
+    "height": 371,
+    "objects": [
+        {
+            "label": "person",
+            "box": [
+                65,
+                49,
+                390,
+                358
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "bottle",
+            "box": [
+                389,
+                156,
+                481,
+                371
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "diningtable",
+            "box": [
+                7,
+                297,
+                500,
+                371
+            ],
+            "hazard_level": "Unknown"
+        }
+    ],
+    "scene_status": "Unknown",
+    "navigation_context": "Unknown"
+}

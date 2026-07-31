@@ -1,0 +1,98 @@
+{
+    "width": 500,
+    "height": 333,
+    "objects": [
+        {
+            "label": "bird",
+            "box": [
+                418,
+                96,
+                459,
+                170
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "bird",
+            "box": [
+                266,
+                86,
+                332,
+                155
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "bird",
+            "box": [
+                90,
+                139,
+                131,
+                230
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "bird",
+            "box": [
+                28,
+                110,
+                93,
+                200
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "bird",
+            "box": [
+                107,
+                105,
+                170,
+                197
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "bird",
+            "box": [
+                415,
+                80,
+                437,
+                113
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "bird",
+            "box": [
+                98,
+                96,
+                136,
+                142
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "bird",
+            "box": [
+                69,
+                98,
+                101,
+                145
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "bird",
+            "box": [
+                88,
+                96,
+                110,
+                125
+            ],
+            "hazard_level": "Unknown"
+        }
+    ],
+    "scene_status": "Unknown",
+    "navigation_context": "Unknown"
+}

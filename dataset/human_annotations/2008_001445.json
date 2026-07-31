@@ -1,0 +1,58 @@
+{
+    "width": 500,
+    "height": 352,
+    "objects": [
+        {
+            "label": "car",
+            "box": [
+                65,
+                56,
+                435,
+                320
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "car",
+            "box": [
+                316,
+                54,
+                457,
+                137
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "car",
+            "box": [
+                156,
+                36,
+                250,
+                68
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "car",
+            "box": [
+                85,
+                35,
+                135,
+                66
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "car",
+            "box": [
+                39,
+                30,
+                82,
+                69
+            ],
+            "hazard_level": "Unknown"
+        }
+    ],
+    "scene_status": "Unknown",
+    "navigation_context": "Unknown"
+}

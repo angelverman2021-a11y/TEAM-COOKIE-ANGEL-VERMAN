@@ -1,0 +1,68 @@
+{
+    "width": 500,
+    "height": 333,
+    "objects": [
+        {
+            "label": "bus",
+            "box": [
+                232,
+                128,
+                431,
+                242
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "car",
+            "box": [
+                1,
+                211,
+                54,
+                333
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "car",
+            "box": [
+                114,
+                196,
+                153,
+                220
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "car",
+            "box": [
+                213,
+                202,
+                233,
+                228
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "car",
+            "box": [
+                72,
+                199,
+                113,
+                221
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "car",
+            "box": [
+                63,
+                198,
+                75,
+                216
+            ],
+            "hazard_level": "Unknown"
+        }
+    ],
+    "scene_status": "Unknown",
+    "navigation_context": "Unknown"
+}

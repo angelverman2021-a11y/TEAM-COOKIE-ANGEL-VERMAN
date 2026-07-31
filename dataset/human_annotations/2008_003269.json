@@ -1,0 +1,28 @@
+{
+    "width": 500,
+    "height": 281,
+    "objects": [
+        {
+            "label": "motorbike",
+            "box": [
+                9,
+                1,
+                471,
+                275
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "pottedplant",
+            "box": [
+                442,
+                1,
+                483,
+                37
+            ],
+            "hazard_level": "Unknown"
+        }
+    ],
+    "scene_status": "Unknown",
+    "navigation_context": "Unknown"
+}

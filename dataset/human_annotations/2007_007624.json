@@ -1,0 +1,98 @@
+{
+    "width": 500,
+    "height": 375,
+    "objects": [
+        {
+            "label": "pottedplant",
+            "box": [
+                424,
+                170,
+                500,
+                370
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "pottedplant",
+            "box": [
+                359,
+                206,
+                421,
+                278
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "pottedplant",
+            "box": [
+                294,
+                193,
+                357,
+                283
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "pottedplant",
+            "box": [
+                275,
+                258,
+                309,
+                310
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "pottedplant",
+            "box": [
+                274,
+                138,
+                415,
+                246
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "pottedplant",
+            "box": [
+                2,
+                236,
+                43,
+                375
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "pottedplant",
+            "box": [
+                45,
+                260,
+                128,
+                375
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "pottedplant",
+            "box": [
+                155,
+                220,
+                222,
+                352
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "pottedplant",
+            "box": [
+                151,
+                40,
+                293,
+                308
+            ],
+            "hazard_level": "Unknown"
+        }
+    ],
+    "scene_status": "Unknown",
+    "navigation_context": "Unknown"
+}

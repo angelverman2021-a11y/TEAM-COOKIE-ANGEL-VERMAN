@@ -1,0 +1,68 @@
+{
+    "width": 333,
+    "height": 500,
+    "objects": [
+        {
+            "label": "bottle",
+            "box": [
+                114,
+                245,
+                178,
+                448
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "person",
+            "box": [
+                56,
+                107,
+                230,
+                387
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "bottle",
+            "box": [
+                20,
+                68,
+                50,
+                167
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "person",
+            "box": [
+                210,
+                1,
+                333,
+                108
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "person",
+            "box": [
+                84,
+                87,
+                333,
+                366
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "pottedplant",
+            "box": [
+                119,
+                1,
+                184,
+                130
+            ],
+            "hazard_level": "Unknown"
+        }
+    ],
+    "scene_status": "Unknown",
+    "navigation_context": "Unknown"
+}

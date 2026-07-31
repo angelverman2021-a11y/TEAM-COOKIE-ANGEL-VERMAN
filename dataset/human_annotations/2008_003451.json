@@ -1,0 +1,28 @@
+{
+    "width": 500,
+    "height": 399,
+    "objects": [
+        {
+            "label": "motorbike",
+            "box": [
+                152,
+                195,
+                390,
+                386
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "person",
+            "box": [
+                224,
+                70,
+                378,
+                375
+            ],
+            "hazard_level": "Unknown"
+        }
+    ],
+    "scene_status": "Unknown",
+    "navigation_context": "Unknown"
+}

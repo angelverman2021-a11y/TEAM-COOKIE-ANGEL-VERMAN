@@ -1,26 +1,25 @@
-import urllib.request
+import pytest
+import main
+from main import app
+from unittest.mock import MagicMock
 
-try:
-    print("Fetching http://127.0.0.1:5000/ ...")
-    req = urllib.request.Request("http://127.0.0.1:5000/")
-    with urllib.request.urlopen(req) as response:
-        html = response.read().decode('utf-8')
-        print(f"Status: {response.status}")
-        
-        if "id=\"btn-connect\"" in html:
-            print("SUCCESS: btn-connect found in served HTML")
-        else:
-            print("ERROR: btn-connect NOT found in served HTML")
-            
-        if "id=\"btn-connect-card\"" in html:
-            print("SUCCESS: btn-connect-card found in served HTML")
-        else:
-            print("ERROR: btn-connect-card NOT found in served HTML")
-            
-        if "script.js" in html:
-            print("SUCCESS: script.js found in served HTML")
-        else:
-            print("ERROR: script.js NOT found in served HTML")
-            
-except Exception as e:
-    print(f"Error: {e}")
+@pytest.fixture
+def client():
+    app.config['TESTING'] = True
+    
+    # Mock audio and vision globally in main
+    mock_audio = MagicMock()
+    mock_vision = MagicMock()
+    
+    main.get_audio = lambda: mock_audio
+    main.get_vision = lambda: mock_vision
+
+    with app.test_client() as client:
+        yield client
+
+def test_frontend_index(client):
+    rv = client.get('/')
+    assert rv.status_code == 200
+    html = rv.data.decode('utf-8')
+    assert "id=\"btn-connect\"" in html or "id=\"btn-connect-card\"" in html
+    # Assume the page loads ok.

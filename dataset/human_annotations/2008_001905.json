@@ -1,0 +1,48 @@
+{
+    "width": 375,
+    "height": 500,
+    "objects": [
+        {
+            "label": "person",
+            "box": [
+                154,
+                173,
+                224,
+                437
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "person",
+            "box": [
+                260,
+                185,
+                373,
+                500
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "train",
+            "box": [
+                1,
+                108,
+                255,
+                373
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "person",
+            "box": [
+                221,
+                174,
+                282,
+                489
+            ],
+            "hazard_level": "Unknown"
+        }
+    ],
+    "scene_status": "Unknown",
+    "navigation_context": "Unknown"
+}

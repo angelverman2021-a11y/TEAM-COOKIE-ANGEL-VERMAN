@@ -1,0 +1,48 @@
+{
+    "width": 500,
+    "height": 335,
+    "objects": [
+        {
+            "label": "boat",
+            "box": [
+                319,
+                155,
+                375,
+                180
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "boat",
+            "box": [
+                274,
+                153,
+                321,
+                174
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "boat",
+            "box": [
+                1,
+                167,
+                67,
+                204
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "boat",
+            "box": [
+                390,
+                152,
+                411,
+                159
+            ],
+            "hazard_level": "Unknown"
+        }
+    ],
+    "scene_status": "Unknown",
+    "navigation_context": "Unknown"
+}

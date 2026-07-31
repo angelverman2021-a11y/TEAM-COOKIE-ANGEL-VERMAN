@@ -1,0 +1,18 @@
+{
+    "width": 174,
+    "height": 500,
+    "objects": [
+        {
+            "label": "bottle",
+            "box": [
+                6,
+                5,
+                157,
+                498
+            ],
+            "hazard_level": "Unknown"
+        }
+    ],
+    "scene_status": "Unknown",
+    "navigation_context": "Unknown"
+}

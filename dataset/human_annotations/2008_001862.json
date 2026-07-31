@@ -1,0 +1,58 @@
+{
+    "width": 375,
+    "height": 500,
+    "objects": [
+        {
+            "label": "pottedplant",
+            "box": [
+                3,
+                125,
+                100,
+                308
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "dog",
+            "box": [
+                138,
+                6,
+                281,
+                210
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "chair",
+            "box": [
+                292,
+                28,
+                374,
+                167
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "person",
+            "box": [
+                325,
+                1,
+                375,
+                100
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "bottle",
+            "box": [
+                45,
+                35,
+                60,
+                65
+            ],
+            "hazard_level": "Unknown"
+        }
+    ],
+    "scene_status": "Unknown",
+    "navigation_context": "Unknown"
+}

@@ -1,0 +1,128 @@
+{
+    "width": 500,
+    "height": 333,
+    "objects": [
+        {
+            "label": "boat",
+            "box": [
+                394,
+                42,
+                445,
+                234
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "boat",
+            "box": [
+                353,
+                81,
+                390,
+                207
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "boat",
+            "box": [
+                309,
+                52,
+                372,
+                246
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "boat",
+            "box": [
+                294,
+                110,
+                324,
+                196
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "boat",
+            "box": [
+                242,
+                70,
+                275,
+                212
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "boat",
+            "box": [
+                230,
+                117,
+                245,
+                189
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "boat",
+            "box": [
+                214,
+                112,
+                239,
+                201
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "boat",
+            "box": [
+                187,
+                114,
+                210,
+                195
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "boat",
+            "box": [
+                171,
+                107,
+                206,
+                223
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "boat",
+            "box": [
+                137,
+                105,
+                171,
+                213
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "boat",
+            "box": [
+                43,
+                224,
+                71,
+                234
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "boat",
+            "box": [
+                4,
+                231,
+                29,
+                244
+            ],
+            "hazard_level": "Unknown"
+        }
+    ],
+    "scene_status": "Unknown",
+    "navigation_context": "Unknown"
+}

@@ -1,0 +1,28 @@
+{
+    "width": 500,
+    "height": 373,
+    "objects": [
+        {
+            "label": "tvmonitor",
+            "box": [
+                1,
+                40,
+                98,
+                222
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "tvmonitor",
+            "box": [
+                240,
+                159,
+                413,
+                329
+            ],
+            "hazard_level": "Unknown"
+        }
+    ],
+    "scene_status": "Unknown",
+    "navigation_context": "Unknown"
+}

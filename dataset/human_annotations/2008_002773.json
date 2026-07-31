@@ -1,0 +1,108 @@
+{
+    "width": 500,
+    "height": 333,
+    "objects": [
+        {
+            "label": "boat",
+            "box": [
+                31,
+                271,
+                150,
+                308
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "boat",
+            "box": [
+                1,
+                273,
+                34,
+                306
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "boat",
+            "box": [
+                162,
+                275,
+                238,
+                308
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "boat",
+            "box": [
+                247,
+                277,
+                321,
+                308
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "boat",
+            "box": [
+                312,
+                274,
+                386,
+                309
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "boat",
+            "box": [
+                390,
+                274,
+                490,
+                311
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "aeroplane",
+            "box": [
+                139,
+                111,
+                189,
+                141
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "aeroplane",
+            "box": [
+                121,
+                87,
+                173,
+                119
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "aeroplane",
+            "box": [
+                148,
+                75,
+                199,
+                106
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "aeroplane",
+            "box": [
+                166,
+                95,
+                219,
+                128
+            ],
+            "hazard_level": "Unknown"
+        }
+    ],
+    "scene_status": "Unknown",
+    "navigation_context": "Unknown"
+}

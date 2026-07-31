@@ -1,0 +1,48 @@
+{
+    "width": 480,
+    "height": 360,
+    "objects": [
+        {
+            "label": "person",
+            "box": [
+                272,
+                28,
+                407,
+                360
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "person",
+            "box": [
+                153,
+                36,
+                272,
+                358
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "person",
+            "box": [
+                104,
+                62,
+                173,
+                354
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "person",
+            "box": [
+                1,
+                148,
+                80,
+                321
+            ],
+            "hazard_level": "Unknown"
+        }
+    ],
+    "scene_status": "Unknown",
+    "navigation_context": "Unknown"
+}

@@ -1,0 +1,38 @@
+{
+    "width": 500,
+    "height": 336,
+    "objects": [
+        {
+            "label": "person",
+            "box": [
+                182,
+                79,
+                378,
+                336
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "tvmonitor",
+            "box": [
+                435,
+                1,
+                500,
+                43
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "chair",
+            "box": [
+                295,
+                41,
+                433,
+                220
+            ],
+            "hazard_level": "Unknown"
+        }
+    ],
+    "scene_status": "Unknown",
+    "navigation_context": "Unknown"
+}

@@ -1,0 +1,68 @@
+{
+    "width": 320,
+    "height": 240,
+    "objects": [
+        {
+            "label": "sofa",
+            "box": [
+                51,
+                122,
+                172,
+                197
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "chair",
+            "box": [
+                217,
+                155,
+                314,
+                227
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "chair",
+            "box": [
+                243,
+                128,
+                293,
+                169
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "chair",
+            "box": [
+                224,
+                109,
+                242,
+                139
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "chair",
+            "box": [
+                209,
+                105,
+                228,
+                133
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "pottedplant",
+            "box": [
+                150,
+                86,
+                183,
+                149
+            ],
+            "hazard_level": "Unknown"
+        }
+    ],
+    "scene_status": "Unknown",
+    "navigation_context": "Unknown"
+}

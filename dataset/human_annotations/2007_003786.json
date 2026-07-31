@@ -1,0 +1,18 @@
+{
+    "width": 500,
+    "height": 281,
+    "objects": [
+        {
+            "label": "bus",
+            "box": [
+                171,
+                165,
+                287,
+                273
+            ],
+            "hazard_level": "Unknown"
+        }
+    ],
+    "scene_status": "Unknown",
+    "navigation_context": "Unknown"
+}

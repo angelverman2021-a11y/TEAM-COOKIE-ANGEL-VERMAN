@@ -1,0 +1,48 @@
+{
+    "width": 500,
+    "height": 412,
+    "objects": [
+        {
+            "label": "cow",
+            "box": [
+                341,
+                102,
+                500,
+                406
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "person",
+            "box": [
+                36,
+                34,
+                79,
+                123
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "person",
+            "box": [
+                2,
+                44,
+                36,
+                120
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "person",
+            "box": [
+                29,
+                42,
+                41,
+                64
+            ],
+            "hazard_level": "Unknown"
+        }
+    ],
+    "scene_status": "Unknown",
+    "navigation_context": "Unknown"
+}

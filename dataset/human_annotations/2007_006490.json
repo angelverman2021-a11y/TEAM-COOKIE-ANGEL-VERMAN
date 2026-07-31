@@ -1,0 +1,58 @@
+{
+    "width": 269,
+    "height": 358,
+    "objects": [
+        {
+            "label": "bird",
+            "box": [
+                80,
+                309,
+                109,
+                332
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "person",
+            "box": [
+                143,
+                165,
+                169,
+                248
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "boat",
+            "box": [
+                210,
+                9,
+                269,
+                67
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "boat",
+            "box": [
+                172,
+                27,
+                226,
+                65
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "boat",
+            "box": [
+                128,
+                25,
+                185,
+                67
+            ],
+            "hazard_level": "Unknown"
+        }
+    ],
+    "scene_status": "Unknown",
+    "navigation_context": "Unknown"
+}

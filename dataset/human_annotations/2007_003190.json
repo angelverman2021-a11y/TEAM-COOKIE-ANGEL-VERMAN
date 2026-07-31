@@ -1,0 +1,48 @@
+{
+    "width": 354,
+    "height": 500,
+    "objects": [
+        {
+            "label": "sheep",
+            "box": [
+                100,
+                30,
+                269,
+                179
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "sheep",
+            "box": [
+                2,
+                47,
+                115,
+                220
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "sheep",
+            "box": [
+                7,
+                47,
+                107,
+                265
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "sheep",
+            "box": [
+                123,
+                93,
+                282,
+                458
+            ],
+            "hazard_level": "Unknown"
+        }
+    ],
+    "scene_status": "Unknown",
+    "navigation_context": "Unknown"
+}

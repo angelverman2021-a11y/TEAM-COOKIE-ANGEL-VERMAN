@@ -1,0 +1,18 @@
+{
+    "width": 500,
+    "height": 330,
+    "objects": [
+        {
+            "label": "boat",
+            "box": [
+                210,
+                153,
+                300,
+                308
+            ],
+            "hazard_level": "Unknown"
+        }
+    ],
+    "scene_status": "Unknown",
+    "navigation_context": "Unknown"
+}

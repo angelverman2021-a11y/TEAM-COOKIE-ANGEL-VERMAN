@@ -1,0 +1,68 @@
+{
+    "width": 452,
+    "height": 500,
+    "objects": [
+        {
+            "label": "dog",
+            "box": [
+                343,
+                148,
+                393,
+                252
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "dog",
+            "box": [
+                118,
+                210,
+                179,
+                362
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "dog",
+            "box": [
+                79,
+                129,
+                176,
+                184
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "dog",
+            "box": [
+                38,
+                169,
+                102,
+                280
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "person",
+            "box": [
+                265,
+                26,
+                318,
+                179
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "boat",
+            "box": [
+                336,
+                1,
+                452,
+                49
+            ],
+            "hazard_level": "Unknown"
+        }
+    ],
+    "scene_status": "Unknown",
+    "navigation_context": "Unknown"
+}

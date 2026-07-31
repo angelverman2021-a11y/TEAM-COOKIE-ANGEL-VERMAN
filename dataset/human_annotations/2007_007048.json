@@ -1,0 +1,78 @@
+{
+    "width": 500,
+    "height": 332,
+    "objects": [
+        {
+            "label": "sheep",
+            "box": [
+                227,
+                55,
+                500,
+                324
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "sheep",
+            "box": [
+                82,
+                56,
+                245,
+                257
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "bottle",
+            "box": [
+                76,
+                42,
+                129,
+                151
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "person",
+            "box": [
+                431,
+                1,
+                484,
+                62
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "person",
+            "box": [
+                311,
+                1,
+                427,
+                71
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "person",
+            "box": [
+                114,
+                1,
+                240,
+                59
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "person",
+            "box": [
+                1,
+                1,
+                132,
+                329
+            ],
+            "hazard_level": "Unknown"
+        }
+    ],
+    "scene_status": "Unknown",
+    "navigation_context": "Unknown"
+}

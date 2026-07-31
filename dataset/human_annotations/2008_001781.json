@@ -1,0 +1,68 @@
+{
+    "width": 468,
+    "height": 312,
+    "objects": [
+        {
+            "label": "tvmonitor",
+            "box": [
+                336,
+                150,
+                416,
+                218
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "pottedplant",
+            "box": [
+                330,
+                95,
+                414,
+                161
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "pottedplant",
+            "box": [
+                230,
+                153,
+                264,
+                181
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "pottedplant",
+            "box": [
+                195,
+                96,
+                237,
+                180
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "pottedplant",
+            "box": [
+                32,
+                160,
+                112,
+                208
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "sofa",
+            "box": [
+                1,
+                202,
+                123,
+                312
+            ],
+            "hazard_level": "Unknown"
+        }
+    ],
+    "scene_status": "Unknown",
+    "navigation_context": "Unknown"
+}

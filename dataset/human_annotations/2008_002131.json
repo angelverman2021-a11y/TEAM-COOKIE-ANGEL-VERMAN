@@ -1,0 +1,98 @@
+{
+    "width": 500,
+    "height": 321,
+    "objects": [
+        {
+            "label": "boat",
+            "box": [
+                91,
+                172,
+                173,
+                237
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "boat",
+            "box": [
+                173,
+                174,
+                251,
+                226
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "boat",
+            "box": [
+                332,
+                166,
+                391,
+                201
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "person",
+            "box": [
+                430,
+                151,
+                452,
+                202
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "person",
+            "box": [
+                462,
+                150,
+                481,
+                204
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "person",
+            "box": [
+                449,
+                147,
+                465,
+                205
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "person",
+            "box": [
+                157,
+                171,
+                171,
+                202
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "person",
+            "box": [
+                118,
+                152,
+                147,
+                201
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "person",
+            "box": [
+                150,
+                175,
+                163,
+                196
+            ],
+            "hazard_level": "Unknown"
+        }
+    ],
+    "scene_status": "Unknown",
+    "navigation_context": "Unknown"
+}

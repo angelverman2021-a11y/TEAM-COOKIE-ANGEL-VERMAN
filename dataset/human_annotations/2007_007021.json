@@ -1,0 +1,58 @@
+{
+    "width": 500,
+    "height": 373,
+    "objects": [
+        {
+            "label": "chair",
+            "box": [
+                99,
+                18,
+                209,
+                127
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "chair",
+            "box": [
+                271,
+                34,
+                397,
+                154
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "bottle",
+            "box": [
+                280,
+                52,
+                305,
+                166
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "bottle",
+            "box": [
+                304,
+                55,
+                338,
+                168
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "diningtable",
+            "box": [
+                3,
+                109,
+                480,
+                369
+            ],
+            "hazard_level": "Unknown"
+        }
+    ],
+    "scene_status": "Unknown",
+    "navigation_context": "Unknown"
+}

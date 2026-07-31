@@ -1,0 +1,28 @@
+{
+    "width": 500,
+    "height": 346,
+    "objects": [
+        {
+            "label": "dog",
+            "box": [
+                185,
+                117,
+                460,
+                346
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "dog",
+            "box": [
+                11,
+                5,
+                500,
+                229
+            ],
+            "hazard_level": "Unknown"
+        }
+    ],
+    "scene_status": "Unknown",
+    "navigation_context": "Unknown"
+}

@@ -1,0 +1,28 @@
+{
+    "width": 500,
+    "height": 400,
+    "objects": [
+        {
+            "label": "tvmonitor",
+            "box": [
+                91,
+                59,
+                449,
+                297
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "bottle",
+            "box": [
+                201,
+                249,
+                247,
+                375
+            ],
+            "hazard_level": "Unknown"
+        }
+    ],
+    "scene_status": "Unknown",
+    "navigation_context": "Unknown"
+}

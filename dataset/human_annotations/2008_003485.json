@@ -1,0 +1,118 @@
+{
+    "width": 500,
+    "height": 375,
+    "objects": [
+        {
+            "label": "bird",
+            "box": [
+                172,
+                262,
+                265,
+                329
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "bird",
+            "box": [
+                21,
+                252,
+                153,
+                306
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "bird",
+            "box": [
+                141,
+                226,
+                221,
+                262
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "bird",
+            "box": [
+                42,
+                232,
+                143,
+                264
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "bird",
+            "box": [
+                269,
+                198,
+                345,
+                229
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "bird",
+            "box": [
+                425,
+                170,
+                470,
+                212
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "bird",
+            "box": [
+                345,
+                204,
+                426,
+                238
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "bird",
+            "box": [
+                350,
+                222,
+                409,
+                264
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "bird",
+            "box": [
+                321,
+                170,
+                361,
+                214
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "bird",
+            "box": [
+                222,
+                183,
+                262,
+                236
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "bird",
+            "box": [
+                358,
+                177,
+                391,
+                207
+            ],
+            "hazard_level": "Unknown"
+        }
+    ],
+    "scene_status": "Unknown",
+    "navigation_context": "Unknown"
+}

@@ -1,0 +1,18 @@
+{
+    "width": 333,
+    "height": 500,
+    "objects": [
+        {
+            "label": "bird",
+            "box": [
+                140,
+                203,
+                189,
+                283
+            ],
+            "hazard_level": "Unknown"
+        }
+    ],
+    "scene_status": "Unknown",
+    "navigation_context": "Unknown"
+}

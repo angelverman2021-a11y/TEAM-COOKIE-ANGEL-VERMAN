@@ -1,0 +1,48 @@
+{
+    "width": 500,
+    "height": 336,
+    "objects": [
+        {
+            "label": "aeroplane",
+            "box": [
+                24,
+                14,
+                410,
+                245
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "aeroplane",
+            "box": [
+                213,
+                53,
+                500,
+                171
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "aeroplane",
+            "box": [
+                88,
+                93,
+                220,
+                166
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "car",
+            "box": [
+                1,
+                244,
+                94,
+                310
+            ],
+            "hazard_level": "Unknown"
+        }
+    ],
+    "scene_status": "Unknown",
+    "navigation_context": "Unknown"
+}

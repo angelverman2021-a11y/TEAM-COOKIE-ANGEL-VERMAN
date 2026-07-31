@@ -1,0 +1,88 @@
+{
+    "width": 332,
+    "height": 500,
+    "objects": [
+        {
+            "label": "cow",
+            "box": [
+                141,
+                294,
+                307,
+                430
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "cow",
+            "box": [
+                28,
+                266,
+                62,
+                281
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "cow",
+            "box": [
+                48,
+                269,
+                92,
+                281
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "cow",
+            "box": [
+                140,
+                265,
+                155,
+                280
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "cow",
+            "box": [
+                254,
+                266,
+                282,
+                278
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "cow",
+            "box": [
+                266,
+                244,
+                286,
+                257
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "cow",
+            "box": [
+                213,
+                240,
+                232,
+                257
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "cow",
+            "box": [
+                36,
+                250,
+                52,
+                269
+            ],
+            "hazard_level": "Unknown"
+        }
+    ],
+    "scene_status": "Unknown",
+    "navigation_context": "Unknown"
+}

@@ -1,0 +1,58 @@
+{
+    "width": 333,
+    "height": 500,
+    "objects": [
+        {
+            "label": "tvmonitor",
+            "box": [
+                6,
+                1,
+                314,
+                262
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "bottle",
+            "box": [
+                40,
+                97,
+                121,
+                411
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "person",
+            "box": [
+                137,
+                36,
+                169,
+                109
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "person",
+            "box": [
+                180,
+                36,
+                216,
+                104
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "person",
+            "box": [
+                96,
+                39,
+                123,
+                103
+            ],
+            "hazard_level": "Unknown"
+        }
+    ],
+    "scene_status": "Unknown",
+    "navigation_context": "Unknown"
+}

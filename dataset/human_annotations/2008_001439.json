@@ -1,0 +1,68 @@
+{
+    "width": 500,
+    "height": 278,
+    "objects": [
+        {
+            "label": "chair",
+            "box": [
+                7,
+                36,
+                180,
+                268
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "chair",
+            "box": [
+                175,
+                37,
+                314,
+                275
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "chair",
+            "box": [
+                324,
+                35,
+                491,
+                274
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "chair",
+            "box": [
+                70,
+                9,
+                198,
+                200
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "chair",
+            "box": [
+                205,
+                6,
+                310,
+                202
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "chair",
+            "box": [
+                321,
+                6,
+                433,
+                202
+            ],
+            "hazard_level": "Unknown"
+        }
+    ],
+    "scene_status": "Unknown",
+    "navigation_context": "Unknown"
+}

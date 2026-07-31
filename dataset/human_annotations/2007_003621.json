@@ -1,0 +1,48 @@
+{
+    "width": 500,
+    "height": 343,
+    "objects": [
+        {
+            "label": "bicycle",
+            "box": [
+                199,
+                153,
+                328,
+                271
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "person",
+            "box": [
+                249,
+                72,
+                334,
+                224
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "bus",
+            "box": [
+                441,
+                62,
+                492,
+                120
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "bus",
+            "box": [
+                295,
+                62,
+                382,
+                109
+            ],
+            "hazard_level": "Unknown"
+        }
+    ],
+    "scene_status": "Unknown",
+    "navigation_context": "Unknown"
+}

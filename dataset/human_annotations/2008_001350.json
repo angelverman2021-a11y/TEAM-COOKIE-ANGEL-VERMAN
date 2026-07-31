@@ -1,0 +1,18 @@
+{
+    "width": 500,
+    "height": 344,
+    "objects": [
+        {
+            "label": "cat",
+            "box": [
+                39,
+                36,
+                468,
+                297
+            ],
+            "hazard_level": "Unknown"
+        }
+    ],
+    "scene_status": "Unknown",
+    "navigation_context": "Unknown"
+}

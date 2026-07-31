@@ -1,0 +1,88 @@
+{
+    "width": 493,
+    "height": 500,
+    "objects": [
+        {
+            "label": "person",
+            "box": [
+                27,
+                1,
+                199,
+                159
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "person",
+            "box": [
+                207,
+                1,
+                340,
+                259
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "person",
+            "box": [
+                292,
+                52,
+                360,
+                267
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "bird",
+            "box": [
+                27,
+                166,
+                391,
+                486
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "bird",
+            "box": [
+                56,
+                204,
+                315,
+                439
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "person",
+            "box": [
+                404,
+                1,
+                493,
+                121
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "person",
+            "box": [
+                354,
+                19,
+                471,
+                422
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "person",
+            "box": [
+                63,
+                69,
+                199,
+                420
+            ],
+            "hazard_level": "Unknown"
+        }
+    ],
+    "scene_status": "Unknown",
+    "navigation_context": "Unknown"
+}

@@ -1,0 +1,28 @@
+{
+    "width": 500,
+    "height": 400,
+    "objects": [
+        {
+            "label": "car",
+            "box": [
+                340,
+                160,
+                417,
+                191
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "car",
+            "box": [
+                473,
+                168,
+                500,
+                196
+            ],
+            "hazard_level": "Unknown"
+        }
+    ],
+    "scene_status": "Unknown",
+    "navigation_context": "Unknown"
+}

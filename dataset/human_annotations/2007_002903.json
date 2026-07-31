@@ -1,0 +1,18 @@
+{
+    "width": 500,
+    "height": 376,
+    "objects": [
+        {
+            "label": "cow",
+            "box": [
+                16,
+                19,
+                480,
+                376
+            ],
+            "hazard_level": "Unknown"
+        }
+    ],
+    "scene_status": "Unknown",
+    "navigation_context": "Unknown"
+}

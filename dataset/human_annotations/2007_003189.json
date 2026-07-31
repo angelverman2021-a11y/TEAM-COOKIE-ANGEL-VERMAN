@@ -1,0 +1,58 @@
+{
+    "width": 458,
+    "height": 500,
+    "objects": [
+        {
+            "label": "horse",
+            "box": [
+                175,
+                170,
+                271,
+                334
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "person",
+            "box": [
+                163,
+                54,
+                289,
+                284
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "pottedplant",
+            "box": [
+                177,
+                328,
+                268,
+                477
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "pottedplant",
+            "box": [
+                143,
+                285,
+                214,
+                348
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "pottedplant",
+            "box": [
+                90,
+                269,
+                139,
+                359
+            ],
+            "hazard_level": "Unknown"
+        }
+    ],
+    "scene_status": "Unknown",
+    "navigation_context": "Unknown"
+}

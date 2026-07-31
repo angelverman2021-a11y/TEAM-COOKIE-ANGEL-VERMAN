@@ -1,0 +1,28 @@
+{
+    "width": 360,
+    "height": 270,
+    "objects": [
+        {
+            "label": "dog",
+            "box": [
+                100,
+                100,
+                240,
+                270
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "sofa",
+            "box": [
+                51,
+                128,
+                264,
+                270
+            ],
+            "hazard_level": "Unknown"
+        }
+    ],
+    "scene_status": "Unknown",
+    "navigation_context": "Unknown"
+}

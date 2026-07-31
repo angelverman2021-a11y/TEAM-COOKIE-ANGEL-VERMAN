@@ -1,0 +1,88 @@
+{
+    "width": 500,
+    "height": 332,
+    "objects": [
+        {
+            "label": "tvmonitor",
+            "box": [
+                243,
+                129,
+                304,
+                181
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "chair",
+            "box": [
+                485,
+                189,
+                500,
+                222
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "chair",
+            "box": [
+                358,
+                195,
+                398,
+                239
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "chair",
+            "box": [
+                300,
+                205,
+                355,
+                254
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "chair",
+            "box": [
+                265,
+                278,
+                374,
+                332
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "sofa",
+            "box": [
+                1,
+                199,
+                99,
+                332
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "diningtable",
+            "box": [
+                234,
+                204,
+                500,
+                332
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "dog",
+            "box": [
+                210,
+                194,
+                257,
+                234
+            ],
+            "hazard_level": "Unknown"
+        }
+    ],
+    "scene_status": "Unknown",
+    "navigation_context": "Unknown"
+}

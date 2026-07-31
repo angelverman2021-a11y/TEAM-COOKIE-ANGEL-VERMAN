@@ -1,0 +1,88 @@
+{
+    "width": 500,
+    "height": 334,
+    "objects": [
+        {
+            "label": "boat",
+            "box": [
+                36,
+                152,
+                387,
+                297
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "car",
+            "box": [
+                343,
+                194,
+                426,
+                240
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "car",
+            "box": [
+                396,
+                201,
+                469,
+                233
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "car",
+            "box": [
+                323,
+                194,
+                351,
+                222
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "car",
+            "box": [
+                87,
+                191,
+                144,
+                209
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "car",
+            "box": [
+                22,
+                189,
+                83,
+                222
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "car",
+            "box": [
+                62,
+                200,
+                118,
+                226
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "bird",
+            "box": [
+                419,
+                260,
+                472,
+                297
+            ],
+            "hazard_level": "Unknown"
+        }
+    ],
+    "scene_status": "Unknown",
+    "navigation_context": "Unknown"
+}

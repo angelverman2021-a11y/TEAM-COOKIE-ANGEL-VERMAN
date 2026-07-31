@@ -1,0 +1,58 @@
+{
+    "width": 500,
+    "height": 370,
+    "objects": [
+        {
+            "label": "bottle",
+            "box": [
+                25,
+                102,
+                93,
+                325
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "bottle",
+            "box": [
+                94,
+                104,
+                166,
+                337
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "bottle",
+            "box": [
+                165,
+                103,
+                247,
+                347
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "tvmonitor",
+            "box": [
+                216,
+                52,
+                416,
+                304
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "tvmonitor",
+            "box": [
+                89,
+                61,
+                162,
+                141
+            ],
+            "hazard_level": "Unknown"
+        }
+    ],
+    "scene_status": "Unknown",
+    "navigation_context": "Unknown"
+}

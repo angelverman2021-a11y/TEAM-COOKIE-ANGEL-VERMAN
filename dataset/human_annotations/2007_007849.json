@@ -1,0 +1,88 @@
+{
+    "width": 500,
+    "height": 281,
+    "objects": [
+        {
+            "label": "tvmonitor",
+            "box": [
+                217,
+                81,
+                242,
+                101
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "tvmonitor",
+            "box": [
+                247,
+                86,
+                269,
+                109
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "tvmonitor",
+            "box": [
+                194,
+                81,
+                216,
+                107
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "tvmonitor",
+            "box": [
+                100,
+                235,
+                134,
+                281
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "person",
+            "box": [
+                362,
+                89,
+                428,
+                169
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "person",
+            "box": [
+                379,
+                166,
+                429,
+                280
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "person",
+            "box": [
+                414,
+                138,
+                454,
+                275
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "person",
+            "box": [
+                436,
+                110,
+                473,
+                239
+            ],
+            "hazard_level": "Unknown"
+        }
+    ],
+    "scene_status": "Unknown",
+    "navigation_context": "Unknown"
+}

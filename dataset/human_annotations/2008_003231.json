@@ -1,0 +1,28 @@
+{
+    "width": 500,
+    "height": 353,
+    "objects": [
+        {
+            "label": "person",
+            "box": [
+                153,
+                120,
+                359,
+                353
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "cat",
+            "box": [
+                223,
+                214,
+                368,
+                321
+            ],
+            "hazard_level": "Unknown"
+        }
+    ],
+    "scene_status": "Unknown",
+    "navigation_context": "Unknown"
+}

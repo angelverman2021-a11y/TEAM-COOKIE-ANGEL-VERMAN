@@ -1,0 +1,48 @@
+{
+    "width": 500,
+    "height": 404,
+    "objects": [
+        {
+            "label": "tvmonitor",
+            "box": [
+                1,
+                111,
+                58,
+                169
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "person",
+            "box": [
+                371,
+                160,
+                476,
+                404
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "person",
+            "box": [
+                227,
+                99,
+                365,
+                404
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "chair",
+            "box": [
+                146,
+                207,
+                263,
+                366
+            ],
+            "hazard_level": "Unknown"
+        }
+    ],
+    "scene_status": "Unknown",
+    "navigation_context": "Unknown"
+}

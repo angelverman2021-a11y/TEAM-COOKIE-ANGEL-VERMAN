@@ -1,0 +1,28 @@
+{
+    "width": 500,
+    "height": 265,
+    "objects": [
+        {
+            "label": "aeroplane",
+            "box": [
+                3,
+                52,
+                500,
+                242
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "person",
+            "box": [
+                272,
+                108,
+                300,
+                133
+            ],
+            "hazard_level": "Unknown"
+        }
+    ],
+    "scene_status": "Unknown",
+    "navigation_context": "Unknown"
+}

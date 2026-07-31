@@ -1,0 +1,18 @@
+{
+    "width": 366,
+    "height": 500,
+    "objects": [
+        {
+            "label": "chair",
+            "box": [
+                160,
+                219,
+                351,
+                486
+            ],
+            "hazard_level": "Unknown"
+        }
+    ],
+    "scene_status": "Unknown",
+    "navigation_context": "Unknown"
+}

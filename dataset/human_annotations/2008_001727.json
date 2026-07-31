@@ -1,0 +1,48 @@
+{
+    "width": 500,
+    "height": 370,
+    "objects": [
+        {
+            "label": "motorbike",
+            "box": [
+                303,
+                192,
+                360,
+                244
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "motorbike",
+            "box": [
+                212,
+                180,
+                267,
+                228
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "person",
+            "box": [
+                289,
+                185,
+                353,
+                243
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "person",
+            "box": [
+                189,
+                169,
+                250,
+                225
+            ],
+            "hazard_level": "Unknown"
+        }
+    ],
+    "scene_status": "Unknown",
+    "navigation_context": "Unknown"
+}

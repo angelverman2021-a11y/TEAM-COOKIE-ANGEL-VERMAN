@@ -1,0 +1,38 @@
+{
+    "width": 320,
+    "height": 457,
+    "objects": [
+        {
+            "label": "person",
+            "box": [
+                87,
+                67,
+                319,
+                401
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "person",
+            "box": [
+                18,
+                12,
+                281,
+                457
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "sofa",
+            "box": [
+                1,
+                72,
+                320,
+                457
+            ],
+            "hazard_level": "Unknown"
+        }
+    ],
+    "scene_status": "Unknown",
+    "navigation_context": "Unknown"
+}

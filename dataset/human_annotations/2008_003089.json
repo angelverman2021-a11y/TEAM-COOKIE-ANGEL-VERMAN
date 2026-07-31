@@ -1,0 +1,18 @@
+{
+    "width": 357,
+    "height": 500,
+    "objects": [
+        {
+            "label": "person",
+            "box": [
+                27,
+                37,
+                285,
+                487
+            ],
+            "hazard_level": "Unknown"
+        }
+    ],
+    "scene_status": "Unknown",
+    "navigation_context": "Unknown"
+}

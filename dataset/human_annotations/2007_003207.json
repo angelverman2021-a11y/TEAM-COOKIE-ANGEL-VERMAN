@@ -1,0 +1,108 @@
+{
+    "width": 500,
+    "height": 333,
+    "objects": [
+        {
+            "label": "bottle",
+            "box": [
+                124,
+                6,
+                162,
+                102
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "bottle",
+            "box": [
+                94,
+                36,
+                132,
+                91
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "bottle",
+            "box": [
+                71,
+                57,
+                108,
+                166
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "bottle",
+            "box": [
+                100,
+                58,
+                150,
+                188
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "bottle",
+            "box": [
+                13,
+                71,
+                61,
+                184
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "bottle",
+            "box": [
+                152,
+                115,
+                203,
+                237
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "bottle",
+            "box": [
+                216,
+                102,
+                261,
+                222
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "bottle",
+            "box": [
+                259,
+                134,
+                307,
+                260
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "bottle",
+            "box": [
+                308,
+                126,
+                356,
+                251
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "bottle",
+            "box": [
+                350,
+                139,
+                408,
+                264
+            ],
+            "hazard_level": "Unknown"
+        }
+    ],
+    "scene_status": "Unknown",
+    "navigation_context": "Unknown"
+}

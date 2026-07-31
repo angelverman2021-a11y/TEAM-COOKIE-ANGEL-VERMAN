@@ -1,0 +1,48 @@
+{
+    "width": 338,
+    "height": 500,
+    "objects": [
+        {
+            "label": "bottle",
+            "box": [
+                6,
+                234,
+                45,
+                362
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "person",
+            "box": [
+                1,
+                156,
+                103,
+                336
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "person",
+            "box": [
+                36,
+                111,
+                198,
+                416
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "person",
+            "box": [
+                91,
+                42,
+                338,
+                500
+            ],
+            "hazard_level": "Unknown"
+        }
+    ],
+    "scene_status": "Unknown",
+    "navigation_context": "Unknown"
+}

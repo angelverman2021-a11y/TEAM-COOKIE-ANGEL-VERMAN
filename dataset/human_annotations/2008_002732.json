@@ -1,0 +1,118 @@
+{
+    "width": 500,
+    "height": 206,
+    "objects": [
+        {
+            "label": "cow",
+            "box": [
+                42,
+                96,
+                153,
+                163
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "cow",
+            "box": [
+                180,
+                99,
+                205,
+                123
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "cow",
+            "box": [
+                238,
+                101,
+                284,
+                135
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "cow",
+            "box": [
+                264,
+                93,
+                299,
+                123
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "cow",
+            "box": [
+                312,
+                92,
+                344,
+                130
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "cow",
+            "box": [
+                299,
+                103,
+                311,
+                119
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "cow",
+            "box": [
+                364,
+                103,
+                383,
+                117
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "cow",
+            "box": [
+                416,
+                101,
+                427,
+                119
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "cow",
+            "box": [
+                149,
+                102,
+                179,
+                127
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "cow",
+            "box": [
+                436,
+                101,
+                447,
+                113
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "cow",
+            "box": [
+                426,
+                100,
+                437,
+                118
+            ],
+            "hazard_level": "Unknown"
+        }
+    ],
+    "scene_status": "Unknown",
+    "navigation_context": "Unknown"
+}

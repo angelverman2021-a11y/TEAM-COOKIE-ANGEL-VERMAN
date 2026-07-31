@@ -1,0 +1,18 @@
+{
+    "width": 500,
+    "height": 370,
+    "objects": [
+        {
+            "label": "sheep",
+            "box": [
+                141,
+                221,
+                261,
+                297
+            ],
+            "hazard_level": "Unknown"
+        }
+    ],
+    "scene_status": "Unknown",
+    "navigation_context": "Unknown"
+}

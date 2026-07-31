@@ -1,0 +1,38 @@
+{
+    "width": 320,
+    "height": 240,
+    "objects": [
+        {
+            "label": "sofa",
+            "box": [
+                161,
+                143,
+                261,
+                228
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "sofa",
+            "box": [
+                1,
+                60,
+                137,
+                240
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "pottedplant",
+            "box": [
+                253,
+                181,
+                320,
+                240
+            ],
+            "hazard_level": "Unknown"
+        }
+    ],
+    "scene_status": "Unknown",
+    "navigation_context": "Unknown"
+}

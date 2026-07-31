@@ -1,0 +1,28 @@
+{
+    "width": 500,
+    "height": 376,
+    "objects": [
+        {
+            "label": "diningtable",
+            "box": [
+                1,
+                3,
+                309,
+                376
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "person",
+            "box": [
+                124,
+                2,
+                500,
+                376
+            ],
+            "hazard_level": "Unknown"
+        }
+    ],
+    "scene_status": "Unknown",
+    "navigation_context": "Unknown"
+}

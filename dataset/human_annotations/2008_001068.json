@@ -1,0 +1,48 @@
+{
+    "width": 500,
+    "height": 345,
+    "objects": [
+        {
+            "label": "horse",
+            "box": [
+                14,
+                73,
+                290,
+                240
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "person",
+            "box": [
+                99,
+                26,
+                165,
+                154
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "horse",
+            "box": [
+                431,
+                118,
+                500,
+                229
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "person",
+            "box": [
+                473,
+                84,
+                500,
+                139
+            ],
+            "hazard_level": "Unknown"
+        }
+    ],
+    "scene_status": "Unknown",
+    "navigation_context": "Unknown"
+}

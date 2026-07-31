@@ -1,0 +1,88 @@
+{
+    "width": 500,
+    "height": 376,
+    "objects": [
+        {
+            "label": "pottedplant",
+            "box": [
+                39,
+                7,
+                88,
+                75
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "pottedplant",
+            "box": [
+                193,
+                113,
+                213,
+                139
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "pottedplant",
+            "box": [
+                247,
+                223,
+                257,
+                242
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "pottedplant",
+            "box": [
+                268,
+                213,
+                277,
+                229
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "pottedplant",
+            "box": [
+                220,
+                140,
+                234,
+                161
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "pottedplant",
+            "box": [
+                209,
+                126,
+                223,
+                151
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "car",
+            "box": [
+                339,
+                212,
+                370,
+                237
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "car",
+            "box": [
+                307,
+                212,
+                320,
+                224
+            ],
+            "hazard_level": "Unknown"
+        }
+    ],
+    "scene_status": "Unknown",
+    "navigation_context": "Unknown"
+}

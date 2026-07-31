@@ -1,0 +1,28 @@
+{
+    "width": 500,
+    "height": 340,
+    "objects": [
+        {
+            "label": "pottedplant",
+            "box": [
+                285,
+                100,
+                426,
+                321
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "pottedplant",
+            "box": [
+                3,
+                27,
+                226,
+                303
+            ],
+            "hazard_level": "Unknown"
+        }
+    ],
+    "scene_status": "Unknown",
+    "navigation_context": "Unknown"
+}

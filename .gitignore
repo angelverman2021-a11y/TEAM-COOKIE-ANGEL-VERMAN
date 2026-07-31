@@ -6,3 +6,6 @@ __pycache__/
 
 # Don't upload the raw images
 emotion folder/
+VOC2012_test/
+dataset/
+models/

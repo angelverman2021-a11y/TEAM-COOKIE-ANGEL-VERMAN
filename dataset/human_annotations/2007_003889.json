@@ -1,0 +1,88 @@
+{
+    "width": 480,
+    "height": 318,
+    "objects": [
+        {
+            "label": "horse",
+            "box": [
+                345,
+                75,
+                427,
+                295
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "horse",
+            "box": [
+                157,
+                79,
+                282,
+                294
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "horse",
+            "box": [
+                52,
+                105,
+                138,
+                297
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "person",
+            "box": [
+                337,
+                32,
+                439,
+                193
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "person",
+            "box": [
+                122,
+                35,
+                239,
+                188
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "person",
+            "box": [
+                1,
+                58,
+                102,
+                308
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "person",
+            "box": [
+                51,
+                48,
+                123,
+                196
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "chair",
+            "box": [
+                431,
+                119,
+                472,
+                166
+            ],
+            "hazard_level": "Unknown"
+        }
+    ],
+    "scene_status": "Unknown",
+    "navigation_context": "Unknown"
+}

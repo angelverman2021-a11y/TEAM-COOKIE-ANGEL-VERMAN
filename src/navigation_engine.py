@@ -1,5 +1,3 @@
-import cv2
-import torch
 import numpy as np
 import threading
 import time
@@ -8,68 +6,15 @@ import sys
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from config import (
-    DEVICE,
-    DEPTH_MODEL,
     DANGER_DISTANCE,
     WARNING_DISTANCE,
     SPEECH_COOLDOWN,
-    NAVIGATION_REFRESH_RATE,
     TTC_CRITICAL_THRESHOLD,
     TTC_WARNING_THRESHOLD,
     HUMAN_PROX_VERY_CLOSE,
     HUMAN_PROX_CLOSE
 )
-
-class DepthEstimator:
-    """Handles the MiDaS depth estimation model."""
-    def __init__(self):
-        self.device = DEVICE
-        print(f"[NAVIGATION] Loading Depth Model '{DEPTH_MODEL}' on '{self.device}'...")
-        try:
-            self.model = torch.hub.load("intel-isl/MiDaS", DEPTH_MODEL, trust_repo=True)
-            self.model.to(self.device)
-            self.model.eval()
-            midas_transforms = torch.hub.load("intel-isl/MiDaS", "transforms", trust_repo=True)
-            if DEPTH_MODEL == "DPT_Large" or DEPTH_MODEL == "DPT_Hybrid":
-                self.transform = midas_transforms.dpt_transform
-            else:
-                self.transform = midas_transforms.small_transform
-                
-            dummy = np.zeros((480, 640, 3), dtype=np.uint8)
-            self.get_depth(dummy)
-            print("[NAVIGATION] Depth Model successfully warmed up.")
-            self.active = True
-        except Exception as e:
-            print(f"[ERROR] Failed to load depth model: {e}")
-            self.active = False
-            
-        self.global_max_depth = 1.0
-
-    def get_depth(self, frame):
-        if not self.active: return None
-        try:
-            img = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-            input_batch = self.transform(img).to(self.device)
-            with torch.no_grad():
-                prediction = self.model(input_batch)
-                prediction = torch.nn.functional.interpolate(
-                    prediction.unsqueeze(1), size=img.shape[:2], mode="bicubic", align_corners=False,
-                ).squeeze()
-            depth_map = prediction.cpu().numpy()
-            
-            current_max = np.max(depth_map)
-            if current_max > self.global_max_depth:
-                self.global_max_depth = current_max
-            else:
-                # Decay the global max slowly (2% per frame) so it adjusts to new environments
-                self.global_max_depth = self.global_max_depth * 0.98 + current_max * 0.02
-                
-            # Normalize dynamically safely
-            return depth_map / (self.global_max_depth + 1e-6)
-        except Exception as e:
-            print(f"[NAVIGATION] Depth Inference Error: {e}")
-            return None
-
+from src.vision.interfaces import PerceptionResult
 
 class CollisionPredictor:
     """Estimates Time-To-Collision (TTC) using depth changes across frames."""
@@ -153,16 +98,13 @@ class ThreatDetector:
             self.audio.speak(msg, priority=priority)
 
 
-class NavigationEngine: # Formerly NavigationManager
-    """Orchestrates depth estimation, collision prediction, and threat detection."""
-    def __init__(self, audio_engine, vision_engine):
+class NavigationEngine:
+    """Orchestrates spatial calculations, collision prediction, and threat detection using standardized PerceptionResult."""
+    def __init__(self, audio_engine):
         self.audio = audio_engine
-        self.vision = vision_engine
-        self.depth_estimator = DepthEstimator()
         self.collision_predictor = CollisionPredictor()
         self.threat_detector = ThreatDetector(audio_engine)
         
-        self.running = False
         self.lock = threading.Lock()
         
         # State variables for APIs and HUD
@@ -179,19 +121,15 @@ class NavigationEngine: # Formerly NavigationManager
         self.nav_metrics = {}
         self.obstacle_memory = {}
 
-    def process_frame(self, frame, tracked_objects, now=None):
-        if not self.depth_estimator.active:
-            self.navigation_status = "Depth Model Failed"
+    def process_perception(self, perception: PerceptionResult):
+        """Consume unified PerceptionResult and update navigation state."""
+        now = perception.timestamp
+        
+        if perception.depth_map is None:
+            self.navigation_status = "Degraded (No Depth Map)"
             return
             
-        if now is None:
-            now = time.time()
-            
-        depth_map = self.engine_get_depth(frame)
-        if depth_map is None:
-            self.navigation_status = "Degraded (No Depth)"
-            return
-            
+        depth_map = perception.depth_map
         h, w = depth_map.shape
         third = w // 3
         
@@ -206,7 +144,10 @@ class NavigationEngine: # Formerly NavigationManager
         nearest_dist = 0.0
         nearest_label = "None"
         
-        for obj in tracked_objects:
+        for obj in perception.objects:
+            if "box" not in obj or "track_id" not in obj or "label" not in obj:
+                continue
+                
             x1, y1, x2, y2 = obj["box"]
             x1, y1 = max(0, x1), max(0, y1)
             x2, y2 = min(w-1, x2), min(h-1, y2)
@@ -215,7 +156,7 @@ class NavigationEngine: # Formerly NavigationManager
             obj_depth_crop = depth_map[y1:y2, x1:x2]
             if obj_depth_crop.size == 0: continue
                 
-            obj_dist = np.percentile(obj_depth_crop, 90)
+            obj_dist = float(np.percentile(obj_depth_crop, 90))
             cx = (x1 + x2) / 2
             pos = "Left" if cx < third else "Center" if cx < 2*third else "Right"
             
@@ -274,9 +215,6 @@ class NavigationEngine: # Formerly NavigationManager
             self.nav_metrics = {nav["track_id"]: nav for nav in annotated_nav}
             self.navigation_status = "Active"
 
-    def engine_get_depth(self, frame):
-        return self.depth_estimator.get_depth(frame)
-
     def _nav_advise(self, action, priority, now):
         key = "nav_advice"
         if key not in self.obstacle_memory or (now - self.obstacle_memory[key]) > SPEECH_COOLDOWN:
@@ -298,6 +236,3 @@ class NavigationEngine: # Formerly NavigationManager
                 "recommended_action": self.recommended_action,
                 "nav_metrics": self.nav_metrics.copy()
             }
-
-    def stop(self):
-        self.running = False

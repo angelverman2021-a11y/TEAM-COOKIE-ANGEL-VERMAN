@@ -1,0 +1,28 @@
+{
+    "width": 500,
+    "height": 339,
+    "objects": [
+        {
+            "label": "train",
+            "box": [
+                1,
+                65,
+                55,
+                290
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "train",
+            "box": [
+                15,
+                35,
+                500,
+                306
+            ],
+            "hazard_level": "Unknown"
+        }
+    ],
+    "scene_status": "Unknown",
+    "navigation_context": "Unknown"
+}

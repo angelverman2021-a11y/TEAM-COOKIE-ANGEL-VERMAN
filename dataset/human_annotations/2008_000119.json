@@ -1,0 +1,28 @@
+{
+    "width": 264,
+    "height": 499,
+    "objects": [
+        {
+            "label": "horse",
+            "box": [
+                29,
+                18,
+                264,
+                499
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "person",
+            "box": [
+                184,
+                209,
+                264,
+                299
+            ],
+            "hazard_level": "Unknown"
+        }
+    ],
+    "scene_status": "Unknown",
+    "navigation_context": "Unknown"
+}

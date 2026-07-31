@@ -1,0 +1,58 @@
+{
+    "width": 354,
+    "height": 500,
+    "objects": [
+        {
+            "label": "diningtable",
+            "box": [
+                1,
+                307,
+                354,
+                500
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "chair",
+            "box": [
+                20,
+                86,
+                118,
+                322
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "chair",
+            "box": [
+                232,
+                181,
+                327,
+                320
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "person",
+            "box": [
+                31,
+                1,
+                252,
+                329
+            ],
+            "hazard_level": "Unknown"
+        },
+        {
+            "label": "person",
+            "box": [
+                227,
+                27,
+                354,
+                327
+            ],
+            "hazard_level": "Unknown"
+        }
+    ],
+    "scene_status": "Unknown",
+    "navigation_context": "Unknown"
+}

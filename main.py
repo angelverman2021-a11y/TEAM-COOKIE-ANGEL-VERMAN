@@ -6,53 +6,38 @@ import time
 
 app = Flask(__name__)
 
-# Initialize Core AI Engines
-audio = AudioEngine()
-vision = VisionEngine(audio_engine=audio)
-
 # Global State for Web Dashboard
 system_status = "Disconnected"
 guardian_info = {"name": "", "phone": ""}
 
-last_emotion_time = 0
-def on_emotion_changed(emotion):
-    global system_status, last_emotion_time
-    now = time.time()
-    
-    if emotion and emotion != "Scanning...":
-        if emotion == "No person detected":
-            sentence = "I do not see anyone in front of you."
-        elif emotion == "Face not clearly visible":
-            sentence = "Someone is there, but their face is turned away."
-        else:
-            sentence = f"The person in front of you seems {emotion}."
-        
-        system_status = f"Last detected: {emotion}"
-        
-        if now - last_emotion_time > 15.0:
-            last_emotion_time = now
-            print(f"[NAVI AUDIO]: {sentence}")
-            audio.speak(sentence, priority=4)
-        
-        # Automatic Guardian SOS Trigger (Example logic)
-        if emotion == "Angry" and guardian_info["name"]:
-            alert_msg = f"Warning. Aggression detected. Alerting {guardian_info['name']}."
-            # High priority alert
-            if now - last_emotion_time > 15.0:
-                audio.speak(alert_msg, priority=1)
-            print(f"[GUARDIAN SOS]: SMS sent to {guardian_info['phone']} - User may be in a hostile environment!")
+# Lazily loaded engines
+audio = None
+vision = None
+
+def get_audio():
+    global audio
+    if audio is None:
+        audio = AudioEngine()
+    return audio
+
+def get_vision():
+    global vision
+    if vision is None:
+        vision = VisionEngine(audio_engine=get_audio())
+    return vision
 
 def generate_video_stream():
     """Generator function to yield JPEG frames instantly whenever a new frame is ready."""
-    last_frame = None
+    last_frame_id = -1
+    v = get_vision()
     while True:
-        if vision.running:
-            vision.frame_ready_event.wait(timeout=0.1)
-            vision.frame_ready_event.clear()
+        if v.running:
+            v.frame_ready_event.wait(timeout=0.1)
+            v.frame_ready_event.clear()
         
-        frame = vision.get_frame()
-        if frame is not None and frame != last_frame:
-            last_frame = frame
+        frame_id, frame = v.get_frame()
+        if frame is not None and frame_id != last_frame_id:
+            last_frame_id = frame_id
             yield (b'--frame\r\n'
                    b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
         else:
@@ -70,11 +55,18 @@ def video_feed():
 
 @app.route('/api/status', methods=['GET'])
 def get_status():
-    nav_status = vision.navigation.get_status() if hasattr(vision, 'navigation') else {}
-    diagnostics = vision.diagnostics if hasattr(vision, 'diagnostics') else {}
-    scene_data = vision.scene_understanding.get_structured_payload() if hasattr(vision, 'scene_understanding') else {}
+    v = get_vision()
+    nav_status = v.navigation.get_status() if hasattr(v, 'navigation') else {}
+    diagnostics = v.diagnostics if hasattr(v, 'diagnostics') else {}
+    
+    # Read from unified PerceptionResult
+    perception = v.latest_perception if hasattr(v, 'latest_perception') else None
+    scene_status = perception.scene_status if perception else "Scanning..."
+    ocr_text = perception.ocr_text if perception else ""
+    nav_context = perception.navigation_context if perception else ""
+    
     return jsonify({
-        "emotion": vision.current_emotion,
+        "scene_status": scene_status,
         "status": system_status,
         "guardian_set": bool(guardian_info["name"]),
         "navigation_status": nav_status.get("navigation_status", "Unknown"),
@@ -88,7 +80,11 @@ def get_status():
         "recommended_action": nav_status.get("recommended_action", "Path clear"),
         "diagnostics": diagnostics,
         "nav_metrics": nav_status.get("nav_metrics", {}),
-        "scene_understanding": scene_data
+        "scene_understanding": {
+            "scene": scene_status,
+            "ocr": ocr_text,
+            "summary": nav_context
+        }
     })
 
 @app.route('/api/guardian', methods=['POST'])
@@ -96,25 +92,26 @@ def set_guardian():
     data = request.json
     guardian_info["name"] = data.get("name", "")
     guardian_info["phone"] = data.get("phone", "")
-    audio.speak(f"Guardian {guardian_info['name']} has been linked to your NAVI glasses.")
+    get_audio().speak(f"Guardian {guardian_info['name']} has been linked to your NAVI glasses.")
     return jsonify({"success": True})
 
 @app.route('/api/sos', methods=['POST'])
 def trigger_sos():
     if guardian_info["name"]:
-        audio.speak(f"SOS triggered. Sending location and camera feed to {guardian_info['name']}.")
+        get_audio().speak(f"SOS triggered. Sending location and camera feed to {guardian_info['name']}.")
         return jsonify({"success": True, "message": f"Alert sent to {guardian_info['name']}"})
     else:
-        audio.speak("SOS triggered, but no guardian is configured.")
+        get_audio().speak("SOS triggered, but no guardian is configured.")
         return jsonify({"success": False, "message": "No Guardian Configured"})
 
 @app.route('/api/connect', methods=['POST'])
 def connect_glasses():
     global system_status
-    if not vision.running:
+    v = get_vision()
+    if not v.running:
         system_status = "Booting Vision Engine..."
         # Start vision engine in a background thread so it doesn't block Flask
-        threading.Thread(target=vision.start, args=(on_emotion_changed,), daemon=True).start()
+        threading.Thread(target=v.start, daemon=True).start()
         return jsonify({"success": True, "message": "Connected successfully"})
     return jsonify({"success": True, "message": "Already connected"})
 

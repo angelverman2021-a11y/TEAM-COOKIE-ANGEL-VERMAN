@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const connectionDot = document.getElementById("connection-dot");
     const connectionText = document.getElementById("connection-text");
     const videoStream = document.getElementById("video-stream");
-    const emotionValue = document.getElementById("emotion-value");
+    const sceneStatusValue = document.getElementById("scene-status-value");
     const btnSos = document.getElementById("btn-sos");
     
     let pollingInterval = null;
@@ -64,17 +64,9 @@ document.addEventListener("DOMContentLoaded", () => {
             const response = await fetch('/api/status');
             const data = await response.json();
             
-            if(emotionValue) {
-                emotionValue.innerText = data.emotion.toUpperCase();
-                
-                // Color coding
-                if (data.emotion.toLowerCase() === "angry") {
-                    emotionValue.style.color = "#EF4444"; // danger
-                } else if (data.emotion.toLowerCase() === "happy") {
-                    emotionValue.style.color = "#4ade80"; // primary
-                } else {
-                    emotionValue.style.color = "#22D3EE"; // cyan
-                }
+            if(sceneStatusValue) {
+                sceneStatusValue.innerText = (data.scene_status || "Scanning...").toUpperCase();
+                sceneStatusValue.style.color = "#4ade80"; // primary
             }
             
             // Populate Debug Diagnostics
