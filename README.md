@@ -16,24 +16,31 @@ The technical strategy of NAVI revolves around a **Modular, Dual-Model Edge Arch
 
 ### System Data Flow
 ```mermaid
-graph TD
-    A[Smart Glasses Camera] -->|Frames via OpenCV| B(Vision Engine Loop)
+flowchart LR
+    %% Professional Styling
+    classDef hardware fill:#1e293b,stroke:#3b82f6,stroke-width:2px,color:#f8fafc,rx:5px,ry:5px
+    classDef aiModel fill:#0f172a,stroke:#10b981,stroke-width:2px,color:#f8fafc
+    classDef engine fill:#334155,stroke:#f59e0b,stroke-width:2px,color:#f8fafc,rx:10px,ry:10px
+    classDef output fill:#1e1e1e,stroke:#ef4444,stroke-width:2px,color:#f8fafc
+    classDef api fill:#475569,stroke:#8b5cf6,stroke-width:2px,color:#f8fafc
     
-    subgraph AI Processing
-        B --> C{Parallel Execution}
-        C -->|RGB Frame| D[Florence-2 Model<br>LoRA Fine-Tuned]
-        C -->|RGB Frame| E[Depth-Anything V2<br>MiDaS]
-        D -->|Semantics / Bounding Boxes / OCR| F[Perception Memory]
-        E -->|Depth Map| F
+    A[📷 Smart Glasses Camera]:::hardware -->|High-Speed<br>OpenCV Frames| B(Vision Engine Loop):::engine
+    
+    subgraph Parallel Edge AI Processing
+        direction TB
+        B -->|RGB Frame| C[🧠 Florence-2<br>Scene & OCR]:::aiModel
+        B -->|RGB Frame| D[🗺️ Depth-Anything<br>Spatial Map]:::aiModel
+        C -->|Semantics| E[(Temporal Memory)]:::engine
+        D -->|Depth Map| E
     end
 
-    F --> G[Navigation Decision Engine]
+    E -->|Normalized Perception| F{Navigation<br>Decision Engine}:::engine
     
-    subgraph Outputs
-        G -->|TTC & Hazards| H[Audio Priority Queue]
-        H -->|Zero-Latency TTS| I((User Earbuds))
-        G -->|Unified Telemetry| J[REST API Server]
-        J -->|JSON| K[React Web Dashboard]
+    subgraph Real-time Outputs
+        F -->|TTC & Hazards| G[🔊 Audio Queue]:::output
+        G -->|Zero-Latency TTS| H((Earbuds)):::hardware
+        F -->|JSON Telemetry| I[🌐 REST API]:::api
+        I -->|React Proxy| J[💻 Web Dashboard]:::api
     end
 ```
 
