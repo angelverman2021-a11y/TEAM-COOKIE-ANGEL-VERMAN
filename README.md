@@ -63,7 +63,28 @@ The frame processing flow executes in the following sequence:
 ```bash
 python main.py
 ```
-The server will load all PyTorch models into VRAM and expose the web dashboard on `http://127.0.0.1:5000`. 
+The server will load all PyTorch models into VRAM and expose the web dashboard on `http://127.0.0.1:5000` (or `http://localhost:5173` via Vite).
+
+## Guardian Emergency System & Twilio
+
+NAVI includes a built-in **Guardian Emergency System** that allows a visually impaired user to trigger an SOS.
+By default, the system runs an **Automated Call Simulator** which plays an alarm locally and flashes the caretaker's remote dashboard (`/guardian`) to save costs during testing.
+
+To enable real-world phone calls to a configured caretaker:
+1. Create a free account at [Twilio.com](https://www.twilio.com).
+2. Obtain your **Account SID**, **Auth Token**, and a Twilio **Phone Number**.
+3. Install the Twilio Python SDK: `pip install twilio`
+4. In `main.py`, locate the `_simulate_automated_call()` function and replace the mock `print()` logic with the official Twilio API snippet:
+   ```python
+   from twilio.rest import Client
+   client = Client("YOUR_ACCOUNT_SID", "YOUR_AUTH_TOKEN")
+   call = client.calls.create(
+       twiml='<Response><Say>Automated Alert. The NAVI user has triggered an SOS. Please check the Guardian Panel.</Say></Response>',
+       to=guardian_info.get("phone"),
+       from_="YOUR_TWILIO_PHONE_NUMBER"
+   )
+   ```
+Once you add these keys, any time the user hits the SOS button in the UI, a real automated voice call will be dispatched to the Guardian's phone number!
 
 ## Shared AI State API
 

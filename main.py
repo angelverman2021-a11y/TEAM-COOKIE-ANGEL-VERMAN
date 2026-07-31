@@ -9,6 +9,7 @@ app = Flask(__name__)
 # Global State for Web Dashboard
 system_status = "Disconnected"
 guardian_info = {"name": "", "phone": ""}
+emergency_mode = False
 
 # Lazily loaded engines
 audio = None
@@ -55,7 +56,24 @@ def video_feed():
 
 @app.route('/api/status', methods=['GET'])
 def get_status():
-    v = get_vision()
+    global vision
+    if vision is None:
+        return jsonify({
+            "scene_status": "Offline",
+            "status": system_status,
+            "guardian_set": bool(guardian_info["name"]),
+            "emergency_mode": emergency_mode,
+            "navigation_status": "Unknown",
+            "safe_direction": "Unknown",
+            "obstacle_count": 0,
+            "nearest_object": "None",
+            "nearest_distance": 0.0,
+            "danger_level": "Safe",
+            "diagnostics": {},
+            "scene_understanding": {}
+        })
+        
+    v = vision
     nav_status = v.navigation.get_status() if hasattr(v, 'navigation') else {}
     diagnostics = v.diagnostics if hasattr(v, 'diagnostics') else {}
     
@@ -69,6 +87,7 @@ def get_status():
         "scene_status": scene_status,
         "status": system_status,
         "guardian_set": bool(guardian_info["name"]),
+        "emergency_mode": emergency_mode,
         "navigation_status": nav_status.get("navigation_status", "Unknown"),
         "safe_direction": nav_status.get("safe_direction", "Unknown"),
         "obstacle_count": nav_status.get("obstacle_count", 0),
@@ -95,14 +114,37 @@ def set_guardian():
     get_audio().speak(f"Guardian {guardian_info['name']} has been linked to your NAVI glasses.")
     return jsonify({"success": True})
 
+def _simulate_automated_call():
+    """Background thread simulating a Twilio API automated phone call."""
+    print("\n[TWILIO MOCK] ---------------------------------------------")
+    print(f"[TWILIO MOCK] Dialing Guardian: {guardian_info.get('name')} at {guardian_info.get('phone')}...")
+    time.sleep(2) # Simulate ringing
+    print("[TWILIO MOCK] Call answered.")
+    print("[TWILIO MOCK] Playing automated TTS payload...")
+    get_audio().speak("Automated Alert. The NAVI user has triggered an SOS. Please check the Guardian Panel immediately.", priority=1)
+    time.sleep(5)
+    print("[TWILIO MOCK] Call disconnected.")
+    print("[TWILIO MOCK] ---------------------------------------------\n")
+
 @app.route('/api/sos', methods=['POST'])
 def trigger_sos():
+    global emergency_mode
+    emergency_mode = True
     if guardian_info["name"]:
-        get_audio().speak(f"SOS triggered. Sending location and camera feed to {guardian_info['name']}.")
+        get_audio().speak(f"SOS triggered. Sending location and camera feed to {guardian_info['name']}.", priority=1)
+        threading.Thread(target=_simulate_automated_call, daemon=True).start()
         return jsonify({"success": True, "message": f"Alert sent to {guardian_info['name']}"})
     else:
-        get_audio().speak("SOS triggered, but no guardian is configured.")
-        return jsonify({"success": False, "message": "No Guardian Configured"})
+        # Still set emergency mode so local guardian panel can see it even if no name is set
+        get_audio().speak("SOS triggered, but no guardian is configured. Activating local emergency beacon.", priority=1)
+        return jsonify({"success": False, "message": "No Guardian Configured (Local Beacon Active)"})
+
+@app.route('/api/resolve_emergency', methods=['POST'])
+def resolve_emergency():
+    global emergency_mode
+    emergency_mode = False
+    get_audio().speak("Emergency resolved by Guardian. Resuming normal operations.")
+    return jsonify({"success": True, "message": "Emergency resolved."})
 
 @app.route('/api/connect', methods=['POST'])
 def connect_glasses():

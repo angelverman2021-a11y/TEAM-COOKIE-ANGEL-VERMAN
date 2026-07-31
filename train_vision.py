@@ -24,8 +24,8 @@ def train_florence(data_dir="dataset", output_dir="models/florence_adapter", epo
         lambda self: self.all_special_tokens if hasattr(self, "all_special_tokens") else []
     )
     
-    processor = AutoProcessor.from_pretrained(model_id, trust_remote_code=True)
-    model = AutoModelForCausalLM.from_pretrained(model_id, trust_remote_code=True, attn_implementation="eager")
+    processor = AutoProcessor.from_pretrained(model_id, trust_remote_code=True, local_files_only=True)
+    model = AutoModelForCausalLM.from_pretrained(model_id, trust_remote_code=True, attn_implementation="eager", local_files_only=True)
     
     # Configure LoRA
     # Florence-2 uses VisionEncoderDecoder. We apply LoRA to linear layers in attention and MLPs
@@ -59,6 +59,8 @@ def train_florence(data_dir="dataset", output_dir="models/florence_adapter", epo
         gradient_accumulation_steps=4,
         learning_rate=1e-4,
         fp16=torch.cuda.is_available(),
+        dataloader_num_workers=4,
+        dataloader_pin_memory=True,
         save_strategy="epoch",
         logging_steps=10,
         remove_unused_columns=False,
@@ -72,8 +74,8 @@ def train_florence(data_dir="dataset", output_dir="models/florence_adapter", epo
         data_collator=collate_fn
     )
     
-    print("[TRAINER] Starting Training...")
-    trainer.train()
+    print("[TRAINER] Starting Training (Resuming from checkpoint if available)...")
+    trainer.train(resume_from_checkpoint=True)
     
     print(f"[TRAINER] Saving LoRA adapter to {output_dir}...")
     model.save_pretrained(output_dir)

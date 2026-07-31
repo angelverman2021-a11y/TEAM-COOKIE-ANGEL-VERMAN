@@ -1,0 +1,63 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", sans-serif;
+  
+  --color-surface: rgba(255, 255, 255, 0.06);
+  --color-background: #090909;
+  --color-on-surface: #e5e2e1;
+  --color-primary: #6bfb9a;
+  --color-on-primary: #003919;
+  --color-secondary: #a4c9ff;
+  --color-on-secondary: #00315d;
+  --color-danger: #EF4444;
+  --color-accent-cyan: #22D3EE;
+  
+  --color-surface-container: #201f1f;
+  --color-surface-container-low: #1c1b1b;
+  --color-border-glass: rgba(255, 255, 255, 0.10);
+}
+
+body {
+  @apply bg-background text-on-surface font-sans antialiased overflow-x-hidden;
+}
+
+.glass-card {
+  @apply bg-surface backdrop-blur-xl border border-border-glass rounded-2xl;
+}
+
+.glow-emerald {
+  box-shadow: 0 0 20px rgba(107, 251, 154, 0.15);
+}
+
+.glow-blue {
+  box-shadow: 0 0 20px rgba(96, 165, 250, 0.15);
+}
+
+.glow-red {
+  box-shadow: 0 0 30px rgba(239, 68, 68, 0.4);
+}
+
+.waveform-bar {
+  animation: wave 1.2s ease-in-out infinite;
+}
+
+@keyframes wave {
+  0%, 100% { height: 4px; }
+  50% { height: 24px; }
+}
+
+.scan-line {
+  width: 100%;
+  height: 2px;
+  background: rgba(107, 251, 154, 0.5);
+  position: absolute;
+  top: 0;
+  left: 0;
+  animation: scan 3s linear infinite;
+}
+
+@keyframes scan {
+  0% { top: 0; }
+  100% { top: 100%; }
+}

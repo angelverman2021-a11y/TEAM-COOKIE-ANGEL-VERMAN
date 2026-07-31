@@ -158,8 +158,13 @@ class FrameProcessor:
             (tw, th), _ = cv2.getTextSize(tag, cv2.FONT_HERSHEY_SIMPLEX, 0.5, 1)
             cv2.rectangle(annotated, (x1, max(0, y1 - 20)), (x1 + tw + 6, max(th + 4, y1)), color, -1)
             text_color = (0, 0, 0) if color != (0, 0, 255) else (255, 255, 255)
-            cv2.putText(annotated, tag, (x1 + 3, max(th + 2, y1 - 4)), 
-                        cv2.FONT_HERSHEY_SIMPLEX, 0.5, text_color, 1, cv2.LINE_AA)
+            cv2.putText(annotated, tag, (x1 + 3, max(th, y1 - 4)), cv2.FONT_HERSHEY_SIMPLEX, 0.5, text_color, 1)
+
+        # Always draw a generic HUD overlay to confirm the stream is alive
+        cv2.putText(annotated, "NAVI VISION ACTIVE", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 100), 2)
+        import datetime
+        time_str = datetime.datetime.now().strftime("%H:%M:%S.%f")[:-3]
+        cv2.putText(annotated, f"SYS TIME: {time_str}", (10, 60), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1)
 
         return annotated
 
