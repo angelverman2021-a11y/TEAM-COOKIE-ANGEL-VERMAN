@@ -4,6 +4,65 @@
 
 NAVI is a computer vision server designed to provide spatial awareness, obstacle avoidance, and scene understanding for visually impaired users via smart glasses. The system processes a live video feed, extracting geometric and semantic information to issue priority-queued audio navigation commands.
 
+## Technical Strategy
+
+The technical strategy of NAVI revolves around a **Modular, Dual-Model Edge Architecture** designed for high reliability and low latency:
+1. **Parallel AI Processing**: Offloading scene context (Florence-2) and depth mapping (Depth Anything V2) to discrete, asynchronous pipelines to prevent blocking the main camera feed.
+2. **Parameter-Efficient Fine-Tuning (PEFT)**: Utilizing LoRA to heavily optimize Florence-2 Large on a hybrid dataset (VOC2012 + custom navigation annotations) to excel at pedestrian hazard recognition without requiring a massive multi-GPU cluster.
+3. **Decoupled Frontend**: Isolating the UI (React/Vite) from the AI backend (Flask/PyTorch) via REST APIs. This ensures that UI polling never interrupts critical safety loops.
+4. **Offline-First Audio**: Using `pyttsx3` for immediate, zero-latency text-to-speech feedback, avoiding cloud latency for critical navigation directions.
+
+## Implementation Process & Architecture
+
+### System Data Flow
+```mermaid
+graph TD
+    A[Smart Glasses Camera] -->|Frames via OpenCV| B(Vision Engine Loop)
+    
+    subgraph AI Processing
+        B --> C{Parallel Execution}
+        C -->|RGB Frame| D[Florence-2 Model<br>LoRA Fine-Tuned]
+        C -->|RGB Frame| E[Depth-Anything V2<br>MiDaS]
+        D -->|Semantics / Bounding Boxes / OCR| F[Perception Memory]
+        E -->|Depth Map| F
+    end
+
+    F --> G[Navigation Decision Engine]
+    
+    subgraph Outputs
+        G -->|TTC & Hazards| H[Audio Priority Queue]
+        H -->|Zero-Latency TTS| I((User Earbuds))
+        G -->|Unified Telemetry| J[REST API Server]
+        J -->|JSON| K[React Web Dashboard]
+    end
+```
+
+### Guardian Emergency Protocol Flow
+```mermaid
+sequenceDiagram
+    participant User as Visually Impaired User
+    participant Frontend as React Dashboard
+    participant Backend as Flask Server
+    participant Twilio as Twilio Cloud API
+    participant Guardian as Caretaker
+
+    User->>Frontend: Presses "EMERGENCY SOS" button
+    Frontend->>Backend: POST /api/sos
+    Backend-->>Frontend: 200 OK (Initiate UI Overlay)
+    
+    rect rgb(200, 50, 50)
+        Backend->>Backend: Sets Global emergency_mode = True
+        Backend->>Twilio: API Trigger: Dispatch Call
+        Twilio-->>Guardian: Rings Guardian's Phone (TTS Alert)
+    end
+    
+    Backend->>Frontend: Broadcasts emergency_mode via /api/status
+    Frontend->>Guardian: Flashes Guardian Web Portal Red + Sounds Alarm
+    Guardian->>Frontend: Reviews Live Camera Feed
+    Guardian->>Backend: Clicks "Resolve Emergency" (POST /api/resolve_emergency)
+    Backend->>Backend: Sets Global emergency_mode = False
+```
+
 ## Modular Vision Foundation Architecture
 
 NAVI has recently been completely refactored to support a **Modular Vision Foundation Architecture**. The perception system is abstracted behind two core interfaces: `VisionModel` and `DepthModel`, allowing any future AI models to be swapped in seamlessly without touching business logic.
